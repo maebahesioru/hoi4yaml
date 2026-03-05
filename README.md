@@ -2,21 +2,23 @@
 
 YAML → HoI4 mod files generator. Designed for AI-assisted modding with shorthand syntax and extensive validation.
 
-## Install
+YAML → HoI4 modファイルジェネレーター。AIによるmod制作を前提に設計されており、ショートハンド構文と充実したバリデーションを備えています。
+
+## Install / インストール
 
 ```bash
 pip install git+https://github.com/maebahesioru/hoi4yaml.git
 ```
 
-## Usage
+## Usage / 使い方
 
 ```bash
-hoi4yaml mod.yaml          # generate mod files
-hoi4yaml mod.yaml --clean  # clean output first
-hoi4yaml --list            # show all sections, shorthands, and validations
+hoi4yaml mod.yaml          # generate mod files / modファイルを生成
+hoi4yaml mod.yaml --clean  # clean output first / 出力先を削除してから生成
+hoi4yaml --list            # show all sections, shorthands, and validations / 一覧表示
 ```
 
-## mod.yaml structure
+## mod.yaml structure / 構造
 
 ```yaml
 mod:
@@ -58,9 +60,9 @@ localisation:
     my_events.1.a: "Press forward."
 ```
 
-## Shorthands
+## Shorthands / ショートハンド
 
-| Shorthand | Expands to |
+| Shorthand | Expands to / 展開後 |
 |---|---|
 | `prereq: X` | `prerequisite: { focus: X }` |
 | `prereq_or: [A, B]` | two separate `prerequisite` blocks (OR) |
@@ -74,24 +76,27 @@ localisation:
 | `add_state_building:` | state-scoped `add_building_construction` |
 | `regiments: [...]` | regiment blocks with auto column/row |
 
-Run `hoi4yaml --list` for the full list.
+Run `hoi4yaml --list` for the full list. / 全一覧は `hoi4yaml --list` で確認できます。
 
-## Validation
+## Validation / バリデーション
 
 Automatically checks for 30+ common mistakes including:
+以下を含む30種類以上のよくあるミスを自動検出します：
+
 - Unknown ideology/trait/tech category/modifier/resource/unit/equipment names (from game files)
-- Wrong effect in trigger context and vice versa
-- `modifier: {...}` block in effect context (does nothing)
-- Missing required fields in `set_politics`, `add_popularity`, `create_wargoal`
-- `add_core_of` vs `add_core` argument confusion
-- Event missing `is_triggered_only` or `mean_time_to_happen`
-- Technology missing `path` or `folder`
-- Building level exceeding game maximum
-- Missing localisation keys, duplicate IDs, unknown GFX keys
+  イデオロギー・トレイト・テックカテゴリ・モディファイア・リソース・ユニット・装備名の誤り（ゲームファイルから取得）
+- Wrong effect in trigger context and vice versa / エフェクト/トリガーの混在
+- `modifier: {...}` block in effect context (does nothing) / エフェクト内の`modifier`ブロック（無効）
+- Missing required fields in `set_politics`, `add_popularity`, `create_wargoal` / 必須フィールド漏れ
+- `add_core_of` vs `add_core` argument confusion / 引数の混同
+- Event missing `is_triggered_only` or `mean_time_to_happen` / イベントの発火条件漏れ
+- Technology missing `path` or `folder` / テクノロジーのツリー定義漏れ
+- Building level exceeding game maximum / ビルディング上限超過
+- Missing localisation keys, duplicate IDs, unknown GFX keys / ローカライズキー漏れ・ID重複・GFXキー不明
 
-Run `hoi4yaml --list` for the full list.
+Run `hoi4yaml --list` for the full list. / 全一覧は `hoi4yaml --list` で確認できます。
 
-## Requirements
+## Requirements / 動作要件
 
 - Python 3.10+
-- Hearts of Iron IV installed (auto-detected via Steam)
+- Hearts of Iron IV installed (auto-detected via Steam) / HoI4インストール済み（Steamから自動検出）
