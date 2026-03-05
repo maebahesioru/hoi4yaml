@@ -1,0 +1,350 @@
+# ============================================================
+# HoI4 Mod 定義ファイル
+# python generate.py mod.yaml [mod2.yaml ...] [--watch]
+# ============================================================
+
+mod:
+  name: "Example Mod"
+  version: "1.0.0"
+  supported_version: "*"
+  tags:
+    - Historical
+    - Gameplay
+
+# ── 変数定義（$VARで参照） ──────────────────────────────────
+vars:
+  MOD_TAG: EXA
+  FOCUS_COST: 10
+  START_DATE: "1936.1.1"
+
+# ── テンプレート（_templateキーで継承） ────────────────────
+templates:
+  base_focus:
+    cost: $FOCUS_COST
+    ai_will_do:
+      factor: 1
+  base_event:
+    picture: GFX_report_event_generic_read_write
+    is_triggered_only: yes
+
+# ── 国家方針ツリー ──────────────────────────────────────────
+national_focus:
+  - _file: ger_focus
+    focus_tree:
+      id: GER_example_focus_tree
+      country:
+        factor: 0
+        modifier:
+          add: 10
+          tag: GER
+      default: false
+      focus:
+        - _template: base_focus
+          id: GER_rearm
+          reward:
+            add_political_power: 100
+        - _template: base_focus
+          id: GER_expand_army
+          prereq: GER_rearm
+          reward:
+            army_experience: 50
+
+# ── イベント ────────────────────────────────────────────────
+events:
+  - _file: example_events
+    country_event:
+      - id: example_events.1
+        title: example_events.1.t
+        desc: example_events.1.d
+        is_triggered_only: yes
+        option:
+          - name: example_events.1.a
+            add_political_power: 50
+          - name: example_events.1.b
+            add_stability: 0.05
+
+# ── アイデア（国家精神） ────────────────────────────────────
+ideas:
+  - _file: example_ideas
+    _category: country
+    example_spirit:
+      picture: generic_pp_unity_bonus
+      cost: 150
+      removal_cost: -1
+      modifier:
+        stability_factor: 0.05
+        political_power_gain: 0.1
+
+# ── キャラクター（指揮官・国家元首） ───────────────────────
+characters:
+  - _file: ger_characters
+    _wrap: characters
+    GER_example_leader:
+      name: "Hans Müller"
+      portraits:
+        civilian:
+          large: GFX_portrait_ger_generic_1
+      country_leader:
+        - ideology: fascism_ideology
+          traits:
+            - ideological_crusader
+          expire: "1965.1.1.1"
+
+# ── スクリプトトリガー ──────────────────────────────────────
+scripted_triggers:
+  - _file: example_triggers
+    is_major_power = yes:
+      is_major: yes
+      has_war: no
+
+# ── スクリプトエフェクト ────────────────────────────────────
+scripted_effects:
+  - _file: example_effects
+    give_example_bonus:
+      add_political_power: 50
+      add_stability: 0.05
+
+# ── 外交関係修正 ────────────────────────────────────────────
+opinion_modifiers:
+  - _file: example_opinions
+    example_positive_opinion:
+      value: 50
+      decay: 1
+      max: 100
+    example_negative_opinion:
+      value: -50
+      decay: 1
+      min: -100
+
+# ── 動的Modifier ────────────────────────────────────────────
+dynamic_modifiers:
+  - _file: example_dynamic
+    example_dynamic_modifier:
+      icon: GFX_modifiers_unknown
+      enable:
+        always: yes
+      modifier:
+        stability_factor: 0.01
+
+# ── 戦争目標 ────────────────────────────────────────────────
+wargoals:
+  - _file: example_wargoals
+    example_wargoal:
+      type: annex_everything
+      allowed:
+        always: yes
+      peace_cost_factor: 1.0
+
+# ── 国家履歴 ────────────────────────────────────────────────
+history_countries:
+  - _file: GER
+    capital: Brandenburg
+    OOB: "GER_1936"
+    set_research_slots: 4
+    set_stability: 0.70
+    set_war_support: 0.60
+    add_ideas:
+      - example_spirit
+    set_politics:
+      ruling_party: fascism
+      last_election: "1933.3.5"
+      election_frequency: 48
+      elections_allowed: no
+    set_popularities:
+      fascism: 60
+      democratic: 20
+      neutrality: 20
+
+# ── 州履歴 ──────────────────────────────────────────────────
+history_states:
+  - _file: 64-Berlin
+    state:
+      id: 64
+      name: "STATE_64"
+      manpower: 1000000
+      history:
+        owner: Germany
+        controller: Germany
+        add_core_of: Germany
+        buildings:
+          infrastructure: 5
+          industrial_complex: 3
+          arms_factory: 2
+      resources:
+        steel: 8
+
+# ── 自治度 ──────────────────────────────────────────────────
+autonomy:
+  - _file: example_autonomy
+    autonomy_state:
+      id: autonomy_example
+      min_level: 0
+      max_level: 100
+      min_freedom_level: 0.0
+      max_freedom_level: 1.0
+
+# ── ゲームルール ────────────────────────────────────────────
+game_rules:
+  - _file: example_rules
+    game_rule:
+      name: EXAMPLE_RULE
+      default: EXAMPLE_RULE_DEFAULT
+      option:
+        - name: EXAMPLE_RULE_DEFAULT
+          desc: EXAMPLE_RULE_DEFAULT_DESC
+          allow_achievements: yes
+
+# ── 講和会議 ────────────────────────────────────────────────
+peace_conference:
+  - _file: example_peace
+    peace_conference_action:
+      example_peace_action:
+        cost_per_state: 1.0
+        allowed:
+          always: yes
+
+# ── 国家カラー ──────────────────────────────────────────────
+country_colors:
+  - _file: colors
+    EXA:
+      color: [100, 150, 200]
+
+# ── 音楽 ────────────────────────────────────────────────────
+music:
+  - _file: example_music
+    music:
+      song: "example_theme.ogg"
+      volume: 0.5
+
+# ── ブックマーク（シナリオ開始日） ─────────────────────────
+bookmarks:
+  - _file: example_bookmark
+    _if: true   # falseにするとこのセクションごとスキップ
+    bookmark:
+      name: EXAMPLE_BOOKMARK
+      desc: EXAMPLE_BOOKMARK_DESC
+      date: "1936.1.1"
+      picture: GFX_select_date_1936
+      default_country: GER
+      default: yes
+
+# ── 国家タグ ────────────────────────────────────────────────
+country_tags:
+  - _file: example_tags
+    EXA: "countries/Example.txt"
+
+# ── スクリプトローカライズ ──────────────────────────────────
+scripted_localisation:
+  - _file: example_scripted_loc
+    defined_text:
+      name: GetExampleText
+      text:
+        - trigger:
+            has_war: yes
+          localization_key: EXAMPLE_AT_WAR
+        - trigger:
+            always: yes
+          localization_key: EXAMPLE_AT_PEACE
+
+# ── GFX（スプライト定義） ───────────────────────────────────
+interface:
+  - _file: example_sprites
+    sprites:
+      - name: GFX_example_focus
+        texturefile: "gfx/interface/focuses/example_focus.dds"
+      - name: GFX_example_idea
+        texturefile: "gfx/interface/ideas/example_idea.dds"
+
+# ── AI戦略 ──────────────────────────────────────────────────
+ai_strategy:
+  - _file: example_ai
+    example_ai_strategy:
+      enable:
+        original_tag: GER
+      ai_strategy:
+        - type: alliance
+          id: ITA
+          value: 200
+        - type: antagonize
+          id: FRA
+          value: 100
+
+# ── 装備定義 ────────────────────────────────────────────────
+equipment:
+  - _file: example_equipment
+    equipments:
+      example_infantry_equipment_1:
+        year: 1936
+        is_archetype: no
+        picture: GFX_equipment_infantry_equipment
+        type:
+          - infantry
+        group_by: archetype
+        interface_category: interface_category_land
+        active: yes
+        reliability: 0.9
+        maximum_speed: 4
+        weight: 0.5
+        supply_consumption: 0.04
+        defense: 20
+        breakthrough: 3
+        hardness: 0
+        armor_value: 0
+        soft_attack: 6
+        hard_attack: 1
+        ap_attack: 1
+        air_attack: 0
+        build_cost_ic: 0.43
+        resources:
+          steel: 1
+
+# ── 初期部隊配置（OOB） ─────────────────────────────────────
+history_units:
+  - _file: GER_1936
+    division_template:
+      - name: "Infantry Division"
+        regiments:
+          infantry:
+            - x: 0
+              y: 0
+            - x: 0
+              y: 1
+    units:
+      division:
+        - name: "1st Infantry Division"
+          location: Brandenburg
+          division_template: "Infantry Division"
+          start_experience_factor: 0.3
+
+# ── 多言語ローカライズ ──────────────────────────────────────
+localisation:
+  english:
+    example_events.1.t: "A New Beginning"
+    example_events.1.d: "The nation stands at a crossroads."
+    example_events.1.a: "We shall press forward."
+    example_events.1.b: "Consolidate our position."
+    example_spirit: "National Unity"
+    example_spirit_desc: "The people stand united behind their government."
+    GER_rearm: "Rearmament Program"
+    GER_rearm_desc: "We must rebuild our military strength."
+    GER_expand_army: "Expand the Army"
+    GER_expand_army_desc: "Our forces must grow to meet the challenges ahead."
+    EXAMPLE_BOOKMARK: "The Road to War"
+    EXAMPLE_BOOKMARK_DESC: "Europe stands on the brink."
+    EXAMPLE_AT_WAR: "At War"
+    EXAMPLE_AT_PEACE: "At Peace"
+  japanese:
+    example_events.1.t: "新たな始まり"
+    example_events.1.d: "国家は岐路に立っている。"
+    example_events.1.a: "前進あるのみ。"
+    example_events.1.b: "現状を固める。"
+    example_spirit: "国民の団結"
+    example_spirit_desc: "国民は政府の背後に団結している。"
+    GER_rearm: "再軍備計画"
+    GER_rearm_desc: "軍事力を再建しなければならない。"
+    GER_expand_army: "陸軍の拡張"
+    GER_expand_army_desc: "来たる試練に備え、軍を増強する。"
+    EXAMPLE_BOOKMARK: "戦争への道"
+    EXAMPLE_BOOKMARK_DESC: "ヨーロッパは崩壊の瀬戸際に立っている。"
+    EXAMPLE_AT_WAR: "交戦中"
+    EXAMPLE_AT_PEACE: "平和時"
