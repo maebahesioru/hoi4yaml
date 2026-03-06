@@ -174,6 +174,64 @@ national_focus:
             country_event: { id: LIB.6 }
             add_political_power: 50
 
+        # === Iron Ore Branch ===
+        - id: LIB_iron_ore_survey
+          prereq: LIB_modernize_economy
+          cost: 10
+          reward:
+            country_event: { id: LIB.7 }
+
+        - id: LIB_bomi_hills_mining
+          prereq: LIB_iron_ore_survey
+          cost: 10
+          reward:
+            add_ideas: LIB_spirit_iron_industry
+            add_resource:
+              type: steel
+              amount: 4
+
+        - id: LIB_export_iron
+          prereq: LIB_bomi_hills_mining
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: industrial_complex
+              level: 1
+            add_political_power: 50
+
+        # === Pan-African Endgame ===
+        - id: LIB_pan_african_congress
+          prereq: LIB_african_brotherhood
+          cost: 10
+          reward:
+            country_event: { id: LIB.8 }
+            add_ideas: LIB_spirit_pan_african_congress
+
+        - id: LIB_liberian_leadership
+          prereq: LIB_pan_african_congress
+          cost: 10
+          reward:
+            add_political_power: 100
+            add_stability: 0.1
+
+        # === Allied Path ===
+        - id: LIB_join_allies
+          prereq: LIB_west_african_solidarity
+          cost: 10
+          reward:
+            country_event: { id: LIB.9 }
+
+        - id: LIB_lend_lease_request
+          prereq: LIB_join_allies
+          cost: 10
+          reward:
+            add_ideas: LIB_spirit_allied_support
+            add_equipment_to_stockpile:
+              type: infantry_equipment_0
+              amount: 500
+              producer: USA
+
 # ── Ideas / National Spirits ───────────────────────────────
 ideas:
   - _file: LIB_ideas
@@ -265,6 +323,28 @@ ideas:
         army_defence_factor: 0.05
         army_attack_factor: -0.05
 
+    LIB_spirit_iron_industry:
+      cost: 0
+      removal_cost: -1
+      modifier:
+        industrial_capacity_factory: 0.05
+        production_speed_industrial_complex_factor: 0.1
+
+    LIB_spirit_pan_african_congress:
+      cost: 0
+      removal_cost: -1
+      modifier:
+        political_power_gain: 0.15
+        stability_factor: 0.05
+
+    LIB_spirit_allied_support:
+      cost: 0
+      removal_cost: -1
+      modifier:
+        army_attack_factor: 0.05
+        army_defence_factor: 0.05
+        war_support_factor: 0.1
+
 # ── Characters ─────────────────────────────────────────────
 characters:
   - _file: LIB_characters
@@ -317,6 +397,31 @@ characters:
         planning_skill: 2
         logistics_skill: 1
         desc: LIB_elwood_davis_desc
+
+    LIB_charles_king:
+      name: "Charles D.B. King"
+      portraits:
+        civilian:
+          large: GFX_portrait_LIB_charles_king
+      advisor:
+        slot: political_advisor
+        idea_token: LIB_charles_king
+        traits: [smooth_talking_charmer]
+        cost: 100
+
+    LIB_benjamin_payne:
+      name: "Benjamin Payne"
+      portraits:
+        army:
+          large: GFX_portrait_LIB_benjamin_payne
+      corps_commander:
+        traits: [career_officer]
+        skill: 1
+        attack_skill: 2
+        defense_skill: 1
+        planning_skill: 1
+        logistics_skill: 1
+        desc: LIB_benjamin_payne_desc
 
 # ── Events ─────────────────────────────────────────────────
 events:
@@ -430,6 +535,51 @@ events:
           - name: LIB.6.b
             add_stability: 0.05
 
+      - id: LIB.7
+        title: LIB.7.t
+        desc: LIB.7.d
+        picture: GFX_report_event_generic_factory
+        is_triggered_only: yes
+        option:
+          - name: LIB.7.a
+            add_state_building:
+              state: Liberia
+              type: infrastructure
+              level: 1
+            add_political_power: 25
+          - name: LIB.7.b
+            add_political_power: 50
+
+      - id: LIB.8
+        title: LIB.8.t
+        desc: LIB.8.d
+        picture: GFX_report_event_generic_conference
+        is_triggered_only: yes
+        option:
+          - name: LIB.8.a
+            add_opinion_modifier:
+              - target: ethiopia
+                modifier: LIB_african_solidarity
+              - target: SAF
+                modifier: LIB_african_solidarity
+            add_political_power: 75
+          - name: LIB.8.b
+            add_stability: 0.05
+            add_political_power: 25
+
+      - id: LIB.9
+        title: LIB.9.t
+        desc: LIB.9.d
+        picture: GFX_report_event_generic_sign_treaty1
+        is_triggered_only: yes
+        option:
+          - name: LIB.9.a
+            join_faction_with: ENG
+            add_war_support: 0.1
+          - name: LIB.9.b
+            add_political_power: 50
+            add_stability: 0.05
+
 # ── Decisions ──────────────────────────────────────────────
 decisions:
   - _file: LIB_decisions
@@ -475,6 +625,33 @@ decisions:
             type: naval_base
             level: 1
           add_political_power: -50
+
+      LIB_train_officers:
+        cost: 75
+        days_remove: 90
+        available:
+          tag: LIB
+          has_army_experience: 25
+        modifier:
+          training_time_factor: -0.1
+        complete_effect:
+          army_experience: -25
+          add_political_power: 25
+
+      LIB_diplomatic_mission_usa:
+        cost: 50
+        days_remove: 60
+        available:
+          tag: LIB
+          NOT:
+            has_war_with: USA
+        modifier:
+          political_power_gain: 0.05
+        complete_effect:
+          add_opinion_modifier:
+            target: USA
+            modifier: LIB_american_friendship
+          add_political_power: 25
 
 # ── Opinion Modifiers ──────────────────────────────────────
 opinion_modifiers:
@@ -621,6 +798,56 @@ localisation:
     LIB_build_monrovia_port: "Expand Monrovia Port"
     LIB_build_monrovia_port_desc: "Invest in expanding the port of Monrovia to improve our naval capabilities and trade."
 
+    # New focuses
+    LIB_iron_ore_survey: "Iron Ore Survey"
+    LIB_iron_ore_survey_desc: "Geological surveys suggest significant iron ore deposits in the Bomi Hills region. We must investigate."
+    LIB_bomi_hills_mining: "Bomi Hills Mining"
+    LIB_bomi_hills_mining_desc: "Develop the Bomi Hills iron ore deposits to fuel Liberian industry."
+    LIB_export_iron: "Export Iron Ore"
+    LIB_export_iron_desc: "Liberian iron ore finds buyers on the world market, generating revenue for industrial expansion."
+    LIB_pan_african_congress: "Pan-African Congress"
+    LIB_pan_african_congress_desc: "Host a congress of African leaders in Monrovia to forge a united front for African independence."
+    LIB_liberian_leadership: "Liberian Leadership"
+    LIB_liberian_leadership_desc: "Liberia stands as the undisputed champion of African peoples, guiding the continent toward freedom."
+    LIB_join_allies: "Join the Allied Cause"
+    LIB_join_allies_desc: "The war in Europe threatens the entire world. Liberia must stand with the democracies against fascism."
+    LIB_lend_lease_request: "Request Lend-Lease"
+    LIB_lend_lease_request_desc: "As an Allied partner, Liberia can request military equipment from the United States under Lend-Lease."
+
+    # New national spirits
+    LIB_spirit_iron_industry: "Iron Industry"
+    LIB_spirit_iron_industry_desc: "The development of Liberia's iron ore deposits is transforming the nation's industrial capacity."
+    LIB_spirit_pan_african_congress: "Pan-African Congress"
+    LIB_spirit_pan_african_congress_desc: "Liberia's hosting of the Pan-African Congress has elevated its standing among African peoples worldwide."
+    LIB_spirit_allied_support: "Allied Support"
+    LIB_spirit_allied_support_desc: "Allied military aid and training is strengthening the Liberian armed forces."
+
+    # New characters
+    LIB_charles_king: "Charles D.B. King"
+    LIB_charles_king_desc: "Charles D.B. King served as President of Liberia from 1920 to 1930. His diplomatic experience makes him a valuable political advisor."
+    LIB_benjamin_payne: "Benjamin Payne"
+    LIB_benjamin_payne_desc: "Colonel Benjamin Payne is an artillery specialist who has studied modern warfare techniques abroad."
+
+    # New events
+    LIB.7.t: "Iron in the Hills"
+    LIB.7.d: "Our geological survey has confirmed significant iron ore deposits in the Bomi Hills. Foreign investors are already expressing interest. We must decide how to proceed."
+    LIB.7.a: "Invest in infrastructure to support mining."
+    LIB.7.b: "Secure foreign investment immediately."
+    LIB.8.t: "The Pan-African Congress"
+    LIB.8.d: "Leaders and representatives from across Africa have gathered in Monrovia. This historic congress could define the future of the continent. Liberia must lead."
+    LIB.8.a: "Sign the Pan-African solidarity declaration."
+    LIB.8.b: "Observe and strengthen our own position."
+    LIB.9.t: "The Allied Approach"
+    LIB.9.d: "British and American representatives have approached Liberia about joining the Allied cause. Liberia's rubber and iron resources are strategically vital. The decision will define our future."
+    LIB.9.a: "We stand with the Allies for freedom."
+    LIB.9.b: "Liberia will remain neutral for now."
+
+    # New decisions
+    LIB_train_officers: "Train Officer Corps"
+    LIB_train_officers_desc: "Send promising officers abroad for advanced military training."
+    LIB_diplomatic_mission_usa: "Diplomatic Mission to Washington"
+    LIB_diplomatic_mission_usa_desc: "Send a diplomatic mission to Washington to strengthen ties with the United States."
+
     # Events
     LIB.1.t: "The Firestone Question"
     LIB.1.d: "The Firestone Rubber Company's concession has long been a source of controversy. Some argue it is economic exploitation; others see it as vital investment. The time has come to decide our stance."
@@ -750,3 +977,53 @@ localisation:
     LIB_rubber_export_deal_desc: "経済的地位を改善するためにゴム輸出の有利な条件を交渉する。"
     LIB_build_monrovia_port: "モンロビア港の拡張"
     LIB_build_monrovia_port_desc: "海軍能力と貿易を改善するためにモンロビア港の拡張に投資する。"
+
+    # 新フォーカス
+    LIB_iron_ore_survey: "鉄鉱石調査"
+    LIB_iron_ore_survey_desc: "地質調査によりボミヒルズ地域に大規模な鉄鉱石鉱床が存在する可能性が示唆されている。調査しなければならない。"
+    LIB_bomi_hills_mining: "ボミヒルズ採掘"
+    LIB_bomi_hills_mining_desc: "リベリアの産業を支えるためにボミヒルズの鉄鉱石鉱床を開発する。"
+    LIB_export_iron: "鉄鉱石輸出"
+    LIB_export_iron_desc: "リベリアの鉄鉱石が世界市場で買い手を見つけ、産業拡大のための収益をもたらす。"
+    LIB_pan_african_congress: "汎アフリカ会議"
+    LIB_pan_african_congress_desc: "アフリカ独立のための統一戦線を築くため、モンロビアでアフリカ指導者の会議を開催する。"
+    LIB_liberian_leadership: "リベリアの指導力"
+    LIB_liberian_leadership_desc: "リベリアはアフリカ人の擁護者として揺るぎない地位を確立し、大陸を自由へと導く。"
+    LIB_join_allies: "連合国の大義に参加"
+    LIB_join_allies_desc: "ヨーロッパの戦争は全世界を脅かしている。リベリアはファシズムに対抗して民主主義国家と共に立たなければならない。"
+    LIB_lend_lease_request: "武器貸与法の要請"
+    LIB_lend_lease_request_desc: "連合国のパートナーとして、リベリアは武器貸与法のもとで米国に軍事装備を要請できる。"
+
+    # 新国家精神
+    LIB_spirit_iron_industry: "鉄鋼産業"
+    LIB_spirit_iron_industry_desc: "リベリアの鉄鉱石鉱床の開発が国の産業能力を変革しつつある。"
+    LIB_spirit_pan_african_congress: "汎アフリカ会議"
+    LIB_spirit_pan_african_congress_desc: "リベリアが汎アフリカ会議を主催したことで、世界中のアフリカ人の間での地位が高まった。"
+    LIB_spirit_allied_support: "連合国の支援"
+    LIB_spirit_allied_support_desc: "連合国の軍事援助と訓練がリベリア軍を強化している。"
+
+    # 新キャラクター
+    LIB_charles_king: "チャールズ・D・B・キング"
+    LIB_charles_king_desc: "チャールズ・D・B・キングは1920年から1930年までリベリア大統領を務めた。その外交経験は貴重な政治顧問としての価値を持つ。"
+    LIB_benjamin_payne: "ベンジャミン・ペイン"
+    LIB_benjamin_payne_desc: "ベンジャミン・ペイン大佐は海外で近代戦術を学んだ砲兵の専門家だ。"
+
+    # 新イベント
+    LIB.7.t: "丘の中の鉄"
+    LIB.7.d: "地質調査によりボミヒルズに大規模な鉄鉱石鉱床が確認された。外国投資家はすでに関心を示している。どう進めるかを決断しなければならない。"
+    LIB.7.a: "採掘を支援するインフラに投資する。"
+    LIB.7.b: "すぐに外国投資を確保する。"
+    LIB.8.t: "汎アフリカ会議"
+    LIB.8.d: "アフリカ各地の指導者と代表者がモンロビアに集まった。この歴史的な会議が大陸の未来を定義するかもしれない。リベリアが主導しなければならない。"
+    LIB.8.a: "汎アフリカ連帯宣言に署名する。"
+    LIB.8.b: "観察し、自国の立場を強化する。"
+    LIB.9.t: "連合国からのアプローチ"
+    LIB.9.d: "英米の代表者がリベリアに連合国の大義への参加を打診してきた。リベリアのゴムと鉄の資源は戦略的に重要だ。この決断が我々の未来を定義する。"
+    LIB.9.a: "自由のために連合国と共に立つ。"
+    LIB.9.b: "リベリアは今のところ中立を保つ。"
+
+    # 新決定事項
+    LIB_train_officers: "将校団の訓練"
+    LIB_train_officers_desc: "有望な将校を高度な軍事訓練のために海外に派遣する。"
+    LIB_diplomatic_mission_usa: "ワシントンへの外交使節"
+    LIB_diplomatic_mission_usa_desc: "米国との関係を強化するためにワシントンに外交使節を派遣する。"

@@ -119,9 +119,9 @@ _idea_hints = None
 
 
 def learn_idea_hints(hoi4_path):
-    """Learn word→picture mapping from game idea files + localisation."""
+    """Learn word→picture mapping from game idea files + DLC + localisation."""
     word_pic = defaultdict(Counter)
-    idea_pics = {}  # idea_id → picture
+    idea_pics = {}
     for f in (hoi4_path / "common/ideas").glob("*.txt"):
         text = f.read_text(encoding="utf-8-sig", errors="ignore")
         for m in re.finditer(
@@ -136,12 +136,12 @@ def learn_idea_hints(hoi4_path):
             for i in range(len(words) - 1):
                 word_pic[f"{words[i]}_{words[i+1]}"][pic] += 1
 
-    # also learn from localisation text
+    # also learn from localisation text (base game only)
     idea_loc_words = {}
     loc_dir = hoi4_path / "localisation" / "english"
     if not loc_dir.exists():
         loc_dir = hoi4_path / "localisation"
-    for f in loc_dir.rglob("*.yml"):
+    for f in loc_dir.rglob("*idea*l_english.yml"):
         try:
             text = f.read_text(encoding="utf-8-sig", errors="ignore")
         except Exception:
@@ -159,10 +159,6 @@ def learn_idea_hints(hoi4_path):
                         word_pic[word][idea_pics[key]] += 1
 
     return {w: c.most_common(1)[0][0] for w, c in word_pic.items()}, idea_pics, idea_loc_words
-
-
-_idea_loc_words = {}
-_idea_pics = {}
 
 
 def get_idea_hints():
