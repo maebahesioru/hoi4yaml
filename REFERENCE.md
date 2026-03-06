@@ -398,7 +398,95 @@ reward:
 
 Note: `days_remove` must also be set on the idea definition itself.
 
-### color auto-duplicate
+### ai_will_do with conditions
+
+```yaml
+ai_will_do: 1                  # simple: factor 1
+
+ai_will_do:                    # with conditional modifiers
+  factor: 1
+  if:
+    - has_war: yes
+      mult: 2                  # multiply factor by 2 if at war
+    - tag: GER
+      mult: 0                  # never pick if Germany
+```
+
+Expands to:
+```
+ai_will_do = {
+    factor = 1
+    modifier = { factor = 2 has_war = yes }
+    modifier = { factor = 0 tag = GER }
+}
+```
+
+### support_companies
+
+```yaml
+history_units:
+  - _file: GER_1936
+    division_template:
+      - name: "Infantry Division"
+        regiments:
+          - infantry: 9
+        support_companies:
+          - engineer: 1
+          - recon: 1
+```
+
+Expands to `support = { type = engineer column = 0 row = 0 }` etc.
+
+### sprites
+
+```yaml
+interface:
+  - _file: my_interface
+    sprites:
+      - name: GFX_my_focus
+        texturefile: "gfx/interface/my_focus.dds"
+      - name: GFX_my_idea
+        texturefile: "gfx/interface/my_idea.dds"
+```
+
+Expands to `spriteTypes = { spriteType = [ ... ] }`.
+
+### set_tech outside history
+
+`set_tech` works anywhere an effect is valid:
+
+```yaml
+reward:
+  set_tech:
+    - infantry_weapons
+    - tech_support
+```
+
+### _namespace default
+
+If `_namespace` is omitted, it defaults to the value of `_file`:
+
+```yaml
+events:
+  - _file: my_events          # namespace = "my_events" automatically
+    country_event:
+      - id: my_events.1       # must start with "my_events."
+```
+
+### prereq AND vs OR
+
+```yaml
+prereq: A                     # prerequisite: { focus: A }
+prereq: [A, B]                # prerequisite: { focus: [A, B] }  — both required (AND)
+prereq_or: [A, B]             # prerequisite: { focus: A }
+                              # prerequisite: { focus: B }       — either one (OR)
+```
+
+### Cache file
+
+`.hoi4cache.json` is created automatically in the project root after the first run. It caches game data (states, countries, ideologies, traits, modifiers, etc.) to speed up subsequent runs. It is invalidated automatically when game files change. Safe to delete — it will be rebuilt on next run. Already in `.gitignore`.
+
+---
 
 ```yaml
 # color is automatically copied to color_ui if color_ui is omitted
