@@ -32,8 +32,9 @@ def to_clausewitz(data, indent=0):
     out = []
     if isinstance(data, dict):
         for key, value in data.items():
-            if key.startswith("_"):
+            if isinstance(key, str) and key.startswith("_"):
                 continue
+            key = str(key)  # handle integer keys (e.g. state IDs)
             if isinstance(value, list) and value and isinstance(value[0], dict):
                 for item in value:
                     out.append(f"{pad}{key} = {{")
@@ -110,21 +111,25 @@ def parse_clausewitz(text):
 
 # ── Helpers ──────────────────────────────────────────────────
 
-def write(path, content, dry_run=False):
+def write(path, content, dry_run=False, diff_only=False):
     global _file_count
     if dry_run:
         print(f"  {B}[dry-run]{X} {path}")
         return
+    full_content = HEADER + content
+    if diff_only and path.exists() and path.read_text(encoding="utf-8-sig") == full_content:
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(HEADER + content, encoding="utf-8-sig")
+    path.write_text(full_content, encoding="utf-8-sig")
     _file_count += 1
     print(f"  {G}+{X} {path}")
 
 
-def warn(msg):
+def warn(msg, line=None):
     global _warn_count
     _warn_count += 1
-    print(f"  {Y}[WARN]{X} {msg}")
+    loc = f"{Y}:{line}{X} " if line else ""
+    print(f"  {Y}[WARN]{X} {loc}{msg}")
 
 
 def apply_vars(data, variables):
@@ -1136,6 +1141,7 @@ def validate(config):
             if isinstance(data, list):
                 for i in data: _check_recursive(i, ctx)
             elif isinstance(data, dict):
+                _line = getattr(data, "_line", None)
                 for k, v in data.items():
                     new_ctx = ctx
                     if k in COUNTRY_LEADER_KEYS:
@@ -1151,7 +1157,7 @@ def validate(config):
 
                     if k in IDEOLOGY_KEYS and isinstance(v, str) and _ideology_set and v not in _ideology_set:
                         close = difflib.get_close_matches(v, _ideology_set, n=3, cutoff=0.5)
-                        warn(f"Unknown ideology: '{v}'" + (f" — did you mean: {close}?" if close else ""))
+                        warn(f"Unknown ideology: '{v}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                     elif k == "traits" and isinstance(v, list):
                         valid = (_country_leader_trait_set if ctx == "country_leader"
                                  else _unit_leader_trait_set if ctx == "unit_leader"
@@ -1160,90 +1166,84 @@ def validate(config):
                         for t in v:
                             if isinstance(t, str) and valid and t not in valid:
                                 close = difflib.get_close_matches(t, valid, n=3, cutoff=0.5)
-                                warn(f"Unknown trait{ctx_label}: '{t}'" + (f" — did you mean: {close}?" if close else ""))
+                                warn(f"Unknown trait{ctx_label}: '{t}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                     elif k == "categories" and isinstance(v, list) and _tech_category_set:
                         for c in v:
                             if isinstance(c, str) and c not in _tech_category_set:
                                 close = difflib.get_close_matches(c, _tech_category_set, n=3, cutoff=0.5)
-                                warn(f"Unknown tech category: '{c}'" + (f" — did you mean: {close}?" if close else ""))
+                                warn(f"Unknown tech category: '{c}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                     elif k in ("add_building_construction", "set_building_level") and _building_max:
                         btype = v.get("type") if isinstance(v, dict) else None
                         level = v.get("level") if isinstance(v, dict) else (v if isinstance(v, int) else None)
                         if btype and level and btype in _building_max and level > _building_max[btype]:
-                            warn(f"Building '{btype}' level {level} exceeds max {_building_max[btype]}")
+                            warn(f"Building '{btype}' level {level} exceeds max {_building_max[btype]}", line=_line)
                     elif k in _building_max and isinstance(v, int) and v > _building_max[k]:
-                        warn(f"Building '{k}' level {v} exceeds max {_building_max[k]}")
+                        warn(f"Building '{k}' level {v} exceeds max {_building_max[k]}", line=_line)
                     elif k == "resources" and isinstance(v, dict) and _resource_set:
                         for rk in v:
                             if rk not in _resource_set:
-                                import difflib
                                 close = difflib.get_close_matches(rk, _resource_set, n=3, cutoff=0.4)
-                                warn(f"Unknown resource: '{rk}'" + (f" — did you mean: {close}?" if close else f" — valid: {sorted(_resource_set)}"))
+                                warn(f"Unknown resource: '{rk}'" + (f" — did you mean: {close}?" if close else f" — valid: {sorted(_resource_set, line=_line)}"))
                     elif k in ("add_resource",) and isinstance(v, dict) and _resource_set:
                         rtype = v.get("type")
                         if rtype and rtype not in _resource_set:
-                            import difflib
                             close = difflib.get_close_matches(rtype, _resource_set, n=3, cutoff=0.4)
-                            warn(f"Unknown resource: '{rtype}'" + (f" — did you mean: {close}?" if close else f" — valid: {sorted(_resource_set)}"))
+                            warn(f"Unknown resource: '{rtype}'" + (f" — did you mean: {close}?" if close else f" — valid: {sorted(_resource_set, line=_line)}"))
                     elif k == "type" and isinstance(v, str) and ctx == "regiment" and _sub_unit_set and v not in _sub_unit_set:
-                        import difflib
                         close = difflib.get_close_matches(v, _sub_unit_set, n=3, cutoff=0.5)
-                        warn(f"Unknown unit type: '{v}'" + (f" — did you mean: {close}?" if close else ""))
+                        warn(f"Unknown unit type: '{v}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                     elif k == "type" and isinstance(v, str) and ctx in ("equipment", "add_equipment_to_stockpile") and _equipment_type_set and v not in _equipment_type_set:
-                        import difflib
                         close = difflib.get_close_matches(v, _equipment_type_set, n=3, cutoff=0.5)
-                        warn(f"Unknown equipment type: '{v}'" + (f" — did you mean: {close}?" if close else ""))
+                        warn(f"Unknown equipment type: '{v}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                     elif k == "ai_will_do" and isinstance(v, dict) and v.get("factor") == 0:
-                        warn(f"ai_will_do factor: 0 — AI will never pick this (use factor: 1 with modifiers instead)")
+                        warn(f"ai_will_do factor: 0 — AI will never pick this (use factor: 1 with modifiers instead)", line=_line)
                     elif k == "modifier" and isinstance(v, dict) and ctx in EFFECT_CTX_KEYS:
-                        warn(f"'modifier' block in effect context ('{ctx}') does nothing — use 'add_modifier' or 'add_ideas' instead")
+                        warn(f"'modifier' block in effect context ('{ctx}') does nothing — use 'add_modifier' or 'add_ideas' instead", line=_line)
                         _check_recursive(v, new_ctx)
                     elif k == "add_core_of" and isinstance(v, (int, float)):
-                        warn(f"'add_core_of' takes a country TAG (e.g. GER), not a number — did you mean 'add_core = {v}'?")
+                        warn(f"'add_core_of' takes a country TAG (e.g. GER), not a number — did you mean 'add_core = {v}'?", line=_line)
                     elif k == "add_core" and isinstance(v, str) and re.match(r'^[A-Z]{2,3}$', v):
-                        warn(f"'add_core' takes a state ID (number), not a TAG — did you mean 'add_core_of = {v}'?")
+                        warn(f"'add_core' takes a state ID (number), not a TAG — did you mean 'add_core_of = {v}'?", line=_line)
                     elif k == "set_technology" and isinstance(v, dict) and "type" in v:
-                        warn(f"'set_technology' does not use a 'type' key — use '{{ tech_name: 1 }}' directly, e.g. set_technology: {{ {v.get('type')}: 1 }}")
+                        warn(f"'set_technology' does not use a 'type' key — use '{{ tech_name: 1 }}' directly, e.g. set_technology: {{ {v.get('type')}: 1 }}", line=_line)
                     elif k == "add_tech_bonus" and isinstance(v, dict) and "category" not in v:
-                        warn(f"'add_tech_bonus' missing 'category' — it will not work without specifying a tech category")
+                        warn(f"'add_tech_bonus' missing 'category' — it will not work without specifying a tech category", line=_line)
                     elif k == "set_politics" and isinstance(v, dict):
                         for req in ("ruling_party", "elections_allowed", "election_frequency"):
                             if req not in v:
-                                warn(f"'set_politics' missing '{req}' — all three fields are required")
+                                warn(f"'set_politics' missing '{req}' — all three fields are required", line=_line)
                         _check_recursive(v, new_ctx)
                     elif k == "add_popularity" and isinstance(v, dict):
                         for req in ("ideology", "popularity"):
                             if req not in v:
-                                warn(f"'add_popularity' missing '{req}' — use add_popularity: {{ ideology: X, popularity: 0.1 }}")
+                                warn(f"'add_popularity' missing '{req}' — use add_popularity: {{ ideology: X, popularity: 0.1 }}", line=_line)
                         _check_recursive(v, new_ctx)
                     elif k == "create_wargoal" and isinstance(v, dict):
                         if "type" not in v:
-                            warn(f"'create_wargoal' missing 'type'")
+                            warn(f"'create_wargoal' missing 'type'", line=_line)
                         elif _wargoal_type_set and v["type"] not in _wargoal_type_set:
-                            import difflib
                             close = difflib.get_close_matches(v["type"], _wargoal_type_set, n=3, cutoff=0.4)
-                            warn(f"Unknown wargoal type: '{v['type']}'" + (f" — did you mean: {close}?" if close else f" — valid: {sorted(_wargoal_type_set)}"))
+                            warn(f"Unknown wargoal type: '{v['type']}'" + (f" — did you mean: {close}?" if close else f" — valid: {sorted(_wargoal_type_set, line=_line)}"))
                         if "target" not in v:
-                            warn(f"'create_wargoal' missing 'target' (country TAG)")
+                            warn(f"'create_wargoal' missing 'target' (country TAG)", line=_line)
                         _check_recursive(v, new_ctx)
                     elif k == "equipment_bonus" and isinstance(v, dict):
                         for eq_key, eq_val in v.items():
                             if isinstance(eq_val, dict) and "instant" not in eq_val:
-                                warn(f"'equipment_bonus.{eq_key}' missing 'instant: yes' — bonus only applies to newly produced equipment, not existing stockpile")
+                                warn(f"'equipment_bonus.{eq_key}' missing 'instant: yes' — bonus only applies to newly produced equipment, not existing stockpile", line=_line)
                         _check_recursive(v, new_ctx)
                     elif k == "modifier" and isinstance(v, dict) and ctx not in EFFECT_CTX_KEYS and _modifier_name_set:
                         for mk in v:
                             if mk not in _modifier_name_set:
-                                import difflib
                                 close = difflib.get_close_matches(mk, _modifier_name_set, n=3, cutoff=0.5)
-                                warn(f"Unknown modifier: '{mk}'" + (f" — did you mean: {close}?" if close else ""))
+                                warn(f"Unknown modifier: '{mk}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                         _check_recursive(v, new_ctx)
                     elif k == "random_list" and isinstance(v, dict):
                         for weight, _ in v.items():
                             try:
                                 float(str(weight))
                             except ValueError:
-                                warn(f"random_list key '{weight}' is not a number (weights must be numeric)")
+                                warn(f"random_list key '{weight}' is not a number (weights must be numeric)", line=_line)
                         _check_recursive(v, new_ctx)
                     elif k in ("completion_reward", "option", "immediate", "after", "hidden_effect") and isinstance(v, (dict, list)):
                         # Check for trigger-only keywords used as effects
@@ -1260,7 +1260,7 @@ def validate(config):
                             elif isinstance(d, dict):
                                 for dk, dv in d.items():
                                     if dk in TRIGGER_ONLY:
-                                        warn(f"'{dk}' is a trigger, not an effect — found in '{ctx_key}' block")
+                                        warn(f"'{dk}' is a trigger, not an effect — found in '{ctx_key}' block", line=_line)
                                     elif dk not in ("limit", "trigger"):
                                         _find_triggers(dv, ctx_key)
                         def _find_effects_in_triggers(d, ctx_key):
@@ -1269,7 +1269,7 @@ def validate(config):
                             elif isinstance(d, dict):
                                 for dk, dv in d.items():
                                     if dk in EFFECT_ONLY:
-                                        warn(f"'{dk}' is an effect, not a trigger — found in '{ctx_key}' block")
+                                        warn(f"'{dk}' is an effect, not a trigger — found in '{ctx_key}' block", line=_line)
                                     else:
                                         _find_effects_in_triggers(dv, ctx_key)
                         _find_triggers(v, k)
@@ -1288,11 +1288,11 @@ def validate(config):
                         _check_recursive(v, new_ctx)
                     # news_event fired from effect context → likely should be country_event
                     elif k == "news_event" and ctx in EFFECT_CTX_KEYS:
-                        warn(f"'news_event' fires for ALL countries — use 'country_event' if targeting specific countries only")
+                        warn(f"'news_event' fires for ALL countries — use 'country_event' if targeting specific countries only", line=_line)
                         _check_recursive(v, new_ctx)
                     # add_to_variable without nearby clamp_variable
                     elif k == "add_to_variable" and isinstance(data, dict) and "clamp_variable" not in data:
-                        warn(f"'add_to_variable' without 'clamp_variable' — variable may go negative or overflow")
+                        warn(f"'add_to_variable' without 'clamp_variable' — variable may go negative or overflow", line=_line)
                         _check_recursive(v, new_ctx)
                     # set_country_flag scope note
                     elif k == "set_country_flag" and ctx in EFFECT_CTX_KEYS:
@@ -1427,7 +1427,7 @@ SECTIONS = {
 def load_configs(yaml_files):
     merged = {}
     for f in yaml_files:
-        config = yaml.safe_load(Path(f).read_text(encoding="utf-8"))
+        config = _load_yaml_with_lines(Path(f).read_text(encoding="utf-8"))
         for key, value in config.items():
             if key in merged and isinstance(value, list):
                 merged[key].extend(value)
@@ -1436,6 +1436,27 @@ def load_configs(yaml_files):
             else:
                 merged[key] = value
     return merged
+
+
+class _LineDict(dict):
+    """dict subclass that stores source line number without polluting keys."""
+    __slots__ = ("_line",)
+
+
+def _load_yaml_with_lines(text):
+    """Load YAML preserving line numbers in _LineDict objects."""
+    class _Loader(yaml.SafeLoader):
+        pass
+
+    def _construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        pairs = loader.construct_pairs(node, deep=True)
+        d = _LineDict(pairs)
+        d._line = node.start_mark.line + 1
+        return d
+
+    _Loader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construct_mapping)
+    return yaml.load(text, Loader=_Loader)
 
 
 def preprocess(config):
@@ -1451,7 +1472,7 @@ def preprocess(config):
 
 # ── Main generate ────────────────────────────────────────────
 
-def generate(yaml_files, clean=False, dry_run=False, output_dir=Path("output"), do_zip=False):
+def generate(yaml_files, clean=False, dry_run=False, output_dir=Path("output"), do_zip=False, diff_only=False):
     global _file_count, _warn_count
     _file_count = 0
     _warn_count = 0
@@ -1479,14 +1500,14 @@ def generate(yaml_files, clean=False, dry_run=False, output_dir=Path("output"), 
         _mod_localisation.update(loc.get("english", {}))
     else:
         _mod_localisation.update(loc)
-    gen_descriptor(mod_dir, info, dry_run=dry_run)
+    gen_descriptor(mod_dir, info, dry_run=dry_run, diff_only=diff_only)
 
     for section, (subdir, ext) in SECTIONS.items():
         if section in config:
-            gen_section(mod_dir, config[section], subdir, ext=ext, dry_run=dry_run)
+            gen_section(mod_dir, config[section], subdir, ext=ext, dry_run=dry_run, diff_only=diff_only)
 
     if "localisation" in config:
-        gen_localisation(mod_dir, config["localisation"], dry_run=dry_run)
+        gen_localisation(mod_dir, config["localisation"], dry_run=dry_run, diff_only=diff_only)
 
     if do_zip and not dry_run:
         zip_path = output_dir / f"{mod_name}.zip"
@@ -1706,7 +1727,7 @@ def main():
 
     files, flags, output_dir = parse_args(args)
 
-    if "--validate" in flags:
+    if "--validate" in flags or "--check" in flags:
         config = preprocess(load_configs(files))
         validate(config)
         if _warn_count == 0:
@@ -1718,6 +1739,7 @@ def main():
         dry_run=("--dry-run" in flags),
         output_dir=output_dir,
         do_zip=("--zip" in flags),
+        diff_only=("--diff" in flags),
     )
 
     generate(files, **kw)
