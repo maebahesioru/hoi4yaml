@@ -373,3 +373,94 @@ def validate(config):
             for v in d.values():
                 _find_load_oob(v)
     _find_load_oob(config)
+
+    # Localisation checks for additional sections
+    def _check_loc(key, section_label):
+        if key and key not in loc_keys:
+            warn(f"Missing localisation: {key} ({section_label})")
+
+    # national_focus: focus name and desc
+    for entry in config.get("national_focus", []):
+        for focus in (entry.get("focus_tree") or {}).get("focus", []):
+            fid = focus.get("id")
+            if fid:
+                _check_loc(fid, "focus name")
+                _check_loc(focus.get("desc", f"{fid}_desc"), "focus desc")
+
+    # ideas: idea name
+    for entry in config.get("ideas", []):
+        if "_category" in entry:
+            # _category style: idea defs are direct non-underscore keys
+            for idea_name, idea_def in entry.items():
+                if not idea_name.startswith("_") and isinstance(idea_def, dict):
+                    _check_loc(idea_name, "idea name")
+        else:
+            for k, v in entry.items():
+                if k.startswith("_"): continue
+                if isinstance(v, dict):
+                    for idea_name, idea_def in v.items():
+                        if isinstance(idea_def, dict):
+                            _check_loc(idea_name, "idea name")
+
+    # decisions: decision name and desc
+    for entry in config.get("decisions", []):
+        for k, v in entry.items():
+            if k.startswith("_"): continue
+            if isinstance(v, list):
+                for dec in v:
+                    if isinstance(dec, dict):
+                        did = dec.get("id")
+                        if did:
+                            _check_loc(did, "decision name")
+                            _check_loc(dec.get("desc", f"{did}_desc"), "decision desc")
+
+    # decisions_categories: category name and desc
+    for entry in config.get("decisions_categories", []):
+        for k, v in entry.items():
+            if k.startswith("_"): continue
+            if isinstance(v, dict):
+                cid = v.get("id", k)
+                _check_loc(cid, "decision_category name")
+
+    # characters: character ID as localisation key
+    for entry in config.get("characters", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "character")
+
+    # dynamic_modifiers: name
+    for entry in config.get("dynamic_modifiers", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "dynamic_modifier")
+
+    # wargoals: name
+    for entry in config.get("wargoals", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "wargoal")
+
+    # opinion_modifiers: modifier name
+    for entry in config.get("opinion_modifiers", []):
+        for k in entry:
+            if not k.startswith("_") and isinstance(entry[k], dict):
+                _check_loc(k, "opinion_modifier")
+
+    # technologies: tech name
+    for entry in config.get("technologies", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "technology")
+
+    # bookmarks: bookmark name
+    for entry in config.get("bookmarks", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                bid = v.get("name", k)
+                _check_loc(bid, "bookmark")
+
+    # autonomy: autonomy name
+    for entry in config.get("autonomy", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "autonomy")
