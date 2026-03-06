@@ -736,3 +736,67 @@ localisation:
     LIB.2.d: "先住民リベリア人が政治権力からの排除についてますます声高に訴えている。アメリコ・リベリア人エリートは対応しなければならない。"
     LIB.2.a: "全リベリア人に政治的権利を拡大する。"
     LIB.2.b: "現在の政治秩序を維持する。"
+
+    # キャラクター（新規）
+    LIB_daniel_howard: "ダニエル・ハワード"
+    LIB_elwood_davis: "エルウッド・デイビス"
+    LIB_daniel_howard_desc: "ダニエル・ハワード将軍はリベリア辺境軍の司令官であり、生涯をリベリアの国境防衛に捧げたベテラン将校だ。"
+    LIB_elwood_davis_desc: "エルウッド・デイビス大佐はリベリア辺境軍内の訓練方法を近代化した有能な歩兵将校だ。"
+
+    # 政治改革ブランチ
+    LIB_political_reform: "政治改革"
+    LIB_political_reform_desc: "リベリアの政治構造は進化しなければならない。問題は：どの方向へ？"
+    LIB_unification_policy: "統一政策"
+    LIB_unification_policy_desc: "アメリコ・リベリア人と先住民リベリア人の溝を埋め、統一された国家を築く。"
+    LIB_consolidate_power: "行政権の強化"
+    LIB_consolidate_power_desc: "大統領権限を強化し、障害なく必要な改革を推進する。"
+    LIB_true_democracy: "真の民主主義"
+    LIB_true_democracy_desc: "出身に関わらず全リベリア人に完全な民主的権利を拡大する。"
+
+    # 外交ブランチ
+    LIB_league_of_nations: "国際連盟"
+    LIB_league_of_nations_desc: "リベリアは国際連盟の創設メンバーだ。この加盟をどう活用するかを決断しなければならない。"
+    LIB_appeal_to_league: "連盟への訴え"
+    LIB_appeal_to_league_desc: "国際連盟をリベリアの主権保護とアフリカ人の権利擁護のプラットフォームとして活用する。"
+    LIB_armed_neutrality: "武装中立"
+    LIB_armed_neutrality_desc: "リベリアは来たる紛争において中立を保つが、自衛の準備は整えておく。"
+    LIB_west_african_solidarity: "西アフリカの連帯"
+    LIB_west_african_solidarity_desc: "西アフリカの人々の間に相互支援のネットワークを構築する。"
+
+    # 新国家精神
+    LIB_spirit_national_unity: "国民統一"
+    LIB_spirit_national_unity_desc: "アメリコ・リベリア人と先住民リベリア人の壁が取り除かれ、より強固な国民的アイデンティティが形成されつつある。"
+    LIB_spirit_strong_executive: "強力な行政府"
+    LIB_spirit_strong_executive_desc: "大統領が政府を強固に掌握し、迅速な意思決定を可能にしている。"
+    LIB_spirit_peoples_republic: "人民共和国"
+    LIB_spirit_peoples_republic_desc: "リベリアは真の民主主義国家となり、全市民が統治に参加している。"
+    LIB_spirit_league_member: "国際連盟加盟国"
+    LIB_spirit_league_member_desc: "リベリアの国際連盟への積極的な参加が国際的な正当性をもたらしている。"
+    LIB_spirit_armed_neutrality: "武装中立"
+    LIB_spirit_armed_neutrality_desc: "リベリアは戦争を求めないが、領土防衛の準備は整えている。"
+
+    # 新イベント
+    LIB.3.t: "前進への道"
+    LIB.3.d: "政治改革の取り組みが始まった。二つの派閥が現れた：平等な権利のもとに全リベリア人を統一したい者たちと、上からの変革を推進するために行政権を強化したい者たちだ。"
+    LIB.3.a: "全リベリア人を一つにまとめなければならない。"
+    LIB.3.b: "リベリアに必要なのは強力なリーダーシップだ。"
+    LIB.4.t: "産業の機会"
+    LIB.4.d: "外国投資家がリベリアの近代化推進に関心を示している。この投資を産業能力の拡大か、インフラの改善に向けることができる。"
+    LIB.4.a: "新しい工場を建設する。"
+    LIB.4.b: "道路と鉄道を改善する。"
+    LIB.5.t: "連盟とリベリア"
+    LIB.5.d: "国際連盟がリベリアの立場を認めた。この瞬間を外交的地位の強化か、防衛支援の結集に活用できる。"
+    LIB.5.a: "外交的地位を強化する。"
+    LIB.5.b: "防衛支援を結集する。"
+    LIB.6.t: "西アフリカ会議"
+    LIB.6.d: "西アフリカ各地の代表者がモンロビアに集まった。永続的な連帯の絆を築く機会だ。"
+    LIB.6.a: "連帯協定に署名する。"
+    LIB.6.b: "観察し、独立を維持する。"
+
+    # 決定事項
+    LIB_recruit_indigenous_soldiers: "先住民兵士の徴募"
+    LIB_recruit_indigenous_soldiers_desc: "先住民人口からの徴募によりリベリア辺境軍を拡大する。"
+    LIB_rubber_export_deal: "ゴム輸出交渉"
+    LIB_rubber_export_deal_desc: "経済的地位を改善するためにゴム輸出の有利な条件を交渉する。"
+    LIB_build_monrovia_port: "モンロビア港の拡張"
+    LIB_build_monrovia_port_desc: "海軍能力と貿易を改善するためにモンロビア港の拡張に投資する。"
