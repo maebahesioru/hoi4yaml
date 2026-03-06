@@ -57,7 +57,7 @@ localisation:
 - **190以上のセクション** — `common/`・`history/`・`map/`・`interface/`・`gfx/`・`sound/`・`music/`を完全網羅
 - **ショートハンド** — `prereq`・`reward`・`rel_pos`・`hidden`・`ai_will_do`・`set_tech`・`set_ruling_party`・`add_pop`・`regiments`・`support_companies`・`sprites`・`timed_idea`・`add_state_building`・`add_state_manpower`
 - **自動レイアウト** — prereqグラフからフォーカスのx/y座標を自動計算
-- **アイコン自動設定** — フォーカスIDのキーワードからアイコンを自動推定
+- **アイコン自動設定** — フォーカスIDとアイデアIDのキーワードからアイコン・ピクチャーを自動推定
 - **名前解決** — `target: ethiopia` → `ETH`、`state: berlin` → `64`
 - **ローカライゼーション自動生成** — `english`のみ記述すれば全言語を自動生成
 - **40以上のバリデーション** — イデオロギー名・トレイト名・モディファイア名・建物レベル・locキー欠落・ID重複など、ゲームファイルと照合してチェック

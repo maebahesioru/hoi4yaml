@@ -57,7 +57,7 @@ localisation:
 - **190+ sections** covering all of `common/`, `history/`, `map/`, `interface/`, `gfx/`, `sound/`, `music/`
 - **Shorthands**: `prereq`, `reward`, `rel_pos`, `hidden`, `ai_will_do`, `set_tech`, `set_ruling_party`, `add_pop`, `regiments`, `support_companies`, `sprites`, `timed_idea`, `add_state_building`, `add_state_manpower`
 - **Auto-layout**: focus x/y positions calculated from prereq graph
-- **Auto-icons**: focus icons guessed from ID keywords
+- **Auto-icons**: focus icons and idea pictures guessed from ID keywords
 - **Name resolution**: `target: ethiopia` → `ETH`, `state: berlin` → `64`
 - **Auto-localisation**: write `english` only, all languages generated automatically
 - **40+ validations**: ideology names, trait names, modifier names, building levels, missing loc keys, duplicate IDs, and more — all checked against live game files
