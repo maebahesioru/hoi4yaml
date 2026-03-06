@@ -663,7 +663,225 @@ history_units:
 
 Expands to `regiment = { type = infantry column = 0 row = 0 }` ... `support = { type = engineer column = 0 row = 0 }` etc.
 
-### sprites
+### Decisions
+
+```yaml
+decisions:
+  - _file: my_decisions
+    my_category:              # decision category key (must match decisions_categories)
+      my_decision:
+        icon: generic_political_discourse
+        cost: 50              # political power cost
+        days_remove: 60       # duration (0 = instant)
+        available:            # trigger: when can it be taken
+          tag: GER
+          has_war: no
+        visible:              # trigger: when is it shown (optional)
+          tag: GER
+        modifier:             # ongoing effect while active
+          stability_factor: 0.05
+        complete_effect:      # fires when taken
+          add_political_power: 25
+        remove_effect:        # fires when duration ends
+          add_stability: 0.05
+        ai_will_do:
+          factor: 1
+
+decisions_categories:
+  - _file: my_categories
+    my_category:
+      icon: generic_political_discourse
+      picture: GFX_decision_cat_my_category
+```
+
+### Unit leaders (field_marshal / corps_commander / navy_leader)
+
+```yaml
+characters:
+  - _file: my_characters
+    _wrap: characters
+    GER_rommel:
+      name: "Erwin Rommel"
+      portraits:
+        army:
+          large: GFX_portrait_GER_rommel
+      field_marshal:
+        traits: [brilliant_strategist, desert_fox]
+        skill: 4
+        attack_skill: 4
+        defense_skill: 3
+        planning_skill: 4
+        logistics_skill: 3
+    GER_guderian:
+      name: "Heinz Guderian"
+      portraits:
+        army:
+          large: GFX_portrait_GER_guderian
+      corps_commander:
+        traits: [panzer_leader, fast_planner]
+        skill: 4
+        attack_skill: 5
+        defense_skill: 2
+        planning_skill: 4
+        logistics_skill: 3
+    GER_raeder:
+      name: "Erich Raeder"
+      portraits:
+        navy:
+          large: GFX_portrait_GER_raeder
+      navy_leader:
+        traits: [fleet_in_being_expert]
+        skill: 3
+        attack_skill: 3
+        defense_skill: 3
+        maneuvering_skill: 2
+        coordination_skill: 3
+```
+
+### on_actions
+
+```yaml
+on_actions:
+  - _file: my_on_actions
+    on_startup:
+      effect:
+        GER = { add_political_power: 50 }
+    on_monthly_GER:
+      effect:
+        add_political_power: 5
+    on_war_won:
+      effect:
+        add_stability: 0.05
+```
+
+### scripted_triggers / scripted_effects
+
+```yaml
+scripted_triggers:
+  - _file: my_triggers
+    my_is_major_democracy:
+      is_major: yes
+      has_government: democratic
+
+scripted_effects:
+  - _file: my_effects
+    my_boost_industry:
+      add_ideas: my_industry_spirit
+      add_political_power: 50
+```
+
+Use them in other blocks:
+
+```yaml
+reward:
+  my_boost_industry: yes    # calls the scripted effect
+
+trigger:
+  my_is_major_democracy: yes  # calls the scripted trigger
+```
+
+### Complete minimal mod example
+
+```yaml
+mod:
+  name: My First Mod
+  version: "1.0"
+  supported_version: "1.14.*"
+
+national_focus:
+  - _file: GER_focuses
+    focus_tree:
+      id: GER_focus_tree
+      country:
+        factor: 0
+        modifier:
+          add: 10
+          tag: GER
+      focus:
+        - id: GER_rearm
+          x: 0
+          y: 0
+          cost: 10
+          reward:
+            add_political_power: 100
+
+ideas:
+  - _file: GER_ideas
+    _category: country
+    GER_war_economy:
+      picture: generic_production_bonus
+      removal_cost: -1
+      modifier:
+        industrial_capacity_factory: 0.1
+
+decisions:
+  - _file: GER_decisions
+    GER_political:
+      GER_rally_the_nation:
+        icon: generic_political_discourse
+        cost: 50
+        days_remove: 30
+        available:
+          tag: GER
+        complete_effect:
+          add_stability: 0.05
+
+characters:
+  - _file: GER_characters
+    _wrap: characters
+    GER_hitler:
+      name: "Adolf Hitler"
+      portraits:
+        civilian:
+          large: GFX_portrait_GER_Hitler
+      country_leader:
+        ideology: nazism
+        traits: [dictator]
+
+events:
+  - _file: GER_events
+    country_event:
+      - id: GER_events.1
+        is_triggered_only: yes
+        option:
+          - name: GER_events.1.a
+            add_political_power: 50
+
+opinion_modifiers:
+  - _file: GER_opinion_modifiers
+    _wrap: opinion_modifiers
+    GER_rival:
+      value: -30
+      decay: 1
+      min: -30
+
+history_countries:
+  - _file: GER
+    capital: 11650
+    set_tech:
+      - infantry_weapons
+      - tech_support
+    set_ruling_party: fascism
+    add_pop:
+      fascism: 0.5
+    recruit_character: GER_hitler
+
+localisation:
+  english:
+    GER_rearm: "Rearmament"
+    GER_rearm_desc: "Germany begins its secret rearmament program."
+    GER_war_economy: "War Economy"
+    GER_war_economy_desc: "The nation's industry is geared toward military production."
+    GER_rally_the_nation: "Rally the Nation"
+    GER_rally_the_nation_desc: "A nationwide rally to boost morale."
+    GER_events.1.t: "A New Dawn"
+    GER_events.1.d: "Germany stands at a crossroads."
+    GER_events.1.a: "Press forward."
+    GER_hitler: "Adolf Hitler"
+    GER_rival: "Rival Nation"
+```
+
+
 
 ```yaml
 interface:
