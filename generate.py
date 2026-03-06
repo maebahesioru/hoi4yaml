@@ -145,6 +145,12 @@ SECTIONS = {
     "tutorial":              ("tutorial",                           "txt"),
     "interface":             ("interface",                          "gfx"),
     "interface_gui":         ("interface",                          "gui"),
+    "gfx_army_icons":        ("gfx/army_icons",                    "txt"),
+    "gfx_maparrows":         ("gfx/maparrows",                     "txt"),
+    "gfx_naval_combat":      ("gfx",                               "txt"),
+    "gfx_posteffect":        ("gfx",                               "txt"),
+    "gfx_3dviewenv":         ("gfx/3dviewenv",                     "txt"),
+    "gfx_equipment_icons":   ("gfx/interface/equipmentdesigner/graphic_db", "txt"),
     "music":                 ("music",                              "asset"),
     "sound":                 ("sound",                              "asset"),
 }
