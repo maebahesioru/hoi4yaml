@@ -483,3 +483,21 @@ def validate(config):
         for k, v in entry.items():
             if not k.startswith("_") and isinstance(v, dict):
                 _check_loc(k, "state_category")
+
+    # cosmetic_tags: tag name
+    for entry in config.get("cosmetic_tags", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "cosmetic_tag")
+
+    # medals: medal name
+    for entry in config.get("medals", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "medal")
+
+    # special_projects: project name
+    for entry in config.get("special_projects", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "special_project")
