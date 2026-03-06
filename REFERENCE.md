@@ -385,6 +385,8 @@ ideas:
         stability_factor: 0.05
 ```
 
+`picture` is auto-guessed from the idea ID keywords (same logic as focus icons). Falls back to `GFX_idea_{id}` if no match found.
+
 ### Events
 
 ```yaml
