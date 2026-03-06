@@ -4,11 +4,15 @@ from .shorthands import expand_shorthands, expand_events
 from .gamedata import resolve_game_refs
 
 
+from .icons import guess_icon
+
+
 def _auto_picture(ideas_dict):
-    """Auto-set picture = GFX_idea_{id} for ideas missing picture."""
+    """Auto-set picture for ideas missing picture, using icon guessing."""
     for k, v in ideas_dict.items():
         if isinstance(v, dict) and "picture" not in v:
-            v["picture"] = f"GFX_idea_{k}"
+            guessed = guess_icon(k)
+            v["picture"] = guessed if guessed else f"GFX_idea_{k}"
     return ideas_dict
 
 
