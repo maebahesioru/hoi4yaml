@@ -293,13 +293,7 @@ Each section is a list of entries. Every entry has a `_file` key that sets the o
 All supported languages are auto-detected from the game's `localisation/languages.yml`. If only `english` is provided, all other languages are automatically generated as copies. Per-language overrides are merged on top of English:
 
 ```jsonl
-localisation:
-  english:
-    MY_key: "My Text"
-  japanese:
-    MY_key: "テキスト"   # overrides English for Japanese only
-  # french, german, spanish, russian, polish, braz_por, korean, simp_chinese
-  # are all auto-generated from english if not specified
+{"localisation": {"english": {"MY_key": "My Text"}, "japanese": {"MY_key": "テキスト"}}}
 ```
 
 ---
@@ -322,31 +316,7 @@ localisation:
 ### Focus tree
 
 ```jsonl
-national_focus:
-  - _file: my_focuses
-    focus_tree:
-      id: my_tree
-      country:
-        factor: 0
-        modifier:
-          add: 10
-          tag: GER
-      focus:
-        - id: GER_focus_1
-          x: 0
-          y: 0
-          cost: 10
-          # icon and desc are auto-assigned from id if omitted
-          prereq: GER_focus_0          # → prerequisite: { focus: GER_focus_0 }  (AND)
-          prereq: [A, B]               # → prerequisite: { focus: [A, B] }       (AND, both)
-          prereq_or: [A, B]            # → prerequisite: { focus: A }            (OR)
-                                       #   prerequisite: { focus: B }
-          rel_pos: GER_focus_0         # → relative_position_id: GER_focus_0
-          reward:                      # → completion_reward:
-            add_political_power: 100
-          ai_will_do: 5                # → ai_will_do: { factor: 5 }
-          hidden:                      # → hidden_effect:
-            set_country_flag: my_flag
+{"national_focus": [{"_file": "my_focuses", "focus_tree": {"id": "my_tree", "country": {"factor": 0, "modifier": {"add": 10, "tag": "GER"}}, "focus": [{"id": "GER_focus_1", "x": 0, "y": 0, "cost": 10, "prereq": ["A", "B"], "prereq_or": ["A", "B"], "rel_pos": "GER_focus_0", "reward": {"add_political_power": 100}, "ai_will_do": 5, "hidden": {"set_country_flag": "my_flag"}}]}}]}
 ```
 
 x/y are auto-calculated from prereq graph if omitted.
@@ -356,14 +326,7 @@ desc is auto-set to `{id}_desc` if omitted.
 ### Ideas
 
 ```jsonl
-ideas:
-  - _file: my_ideas
-    _category: country        # → ideas: { country: { ... } }
-    my_idea:
-      picture: GFX_idea_my_idea
-      removal_cost: -1
-      modifier:
-        stability_factor: 0.05
+{"ideas": [{"_file": "my_ideas", "_category": "country", "my_idea": {"picture": "GFX_idea_my_idea", "removal_cost": -1, "modifier": {"stability_factor": 0.05}}}]}
 ```
 
 `picture` is auto-guessed from the idea ID keywords (same logic as focus icons). Falls back to `GFX_idea_{id}` if no match found.
@@ -371,116 +334,39 @@ ideas:
 ### Events
 
 ```jsonl
-events:
-  - _file: my_events
-    _namespace: my_mod        # must match event ID prefix
-    country_event:            # fires for a country
-      - id: my_mod.1
-        # title and desc auto-set to my_mod.1.t / my_mod.1.d if omitted
-        is_triggered_only: yes
-        option:
-          - name: my_mod.1.a  # auto-set to my_mod.1.a if omitted
-            add_political_power: 50
-    news_event:               # fires for ALL countries (use sparingly)
-      - id: my_mod.2
-        is_triggered_only: yes
-        option:
-          - name: my_mod.2.a
-    state_event:              # fires for a state scope
-      - id: my_mod.3
-        is_triggered_only: yes
-        option:
-          - name: my_mod.3.a
+{"events": [{"_file": "my_events", "_namespace": "my_mod", "country_event": [{"id": "my_mod.1", "is_triggered_only": true, "option": [{"name": "my_mod.1.a", "add_political_power": 50}]}], "news_event": [{"id": "my_mod.2", "is_triggered_only": true, "option": [{"name": "my_mod.2.a"}]}], "state_event": [{"id": "my_mod.3", "is_triggered_only": true, "option": [{"name": "my_mod.3.a"}]}]}]}
 ```
 
 ### History
 
 ```jsonl
-history_countries:
-  - _file: GER
-    capital: 11650            # province ID (not state ID)
-    set_tech:                 # → set_technology: { infantry_weapons: 1, ... }
-      - infantry_weapons
-      - tech_support
-    set_ruling_party: fascism # → set_politics: { ruling_party: fascism, elections_allowed: no, election_frequency: 48 }
-    add_pop:                  # → add_popularity: { ideology: fascism, popularity: 0.3 }
-      fascism: 0.3
-
-history_states:
-  - _file: 64_berlin
-    state:
-      id: 64
-      name: STATE_64
-      history:
-        owner: GER
-        add_core_of: GER
-
-history_units:
-  - _file: GER_1936
-    division_template:
-      - name: "Infantry Division"
-        regiments:            # → regiment blocks with column/row auto-assigned
-          - infantry: 9
-          - artillery_brigade: 1
-        support_companies:
-          - engineer: 1
+{"history_countries": [{"_file": "GER", "capital": 11650, "set_tech": ["infantry_weapons", "tech_support"], "set_ruling_party": "fascism", "add_pop": {"fascism": 0.3}}]}
+{"history_states": [{"_file": "64_berlin", "state": {"id": 64, "name": "STATE_64", "history": {"owner": "GER", "add_core_of": "GER"}}}]}
+{"history_units": [{"_file": "GER_1936", "division_template": [{"name": "Infantry Division", "regiments": [{"infantry": 9}, {"artillery_brigade": 1}], "support_companies": [{"engineer": 1}]}]}]}
 ```
 
 ### Opinion modifiers
 
 ```jsonl
-opinion_modifiers:
-  - _file: my_opinion_modifiers
-    _wrap: opinion_modifiers   # REQUIRED — must wrap in opinion_modifiers = { }
-    my_modifier:
-      value: 30
-      decay: 1
-      max: 30
+{"opinion_modifiers": [{"_file": "my_opinion_modifiers", "_wrap": "opinion_modifiers", "my_modifier": {"value": 30, "decay": 1, "max": 30}}]}
 ```
 
 ### Characters
 
 ```jsonl
-characters:
-  - _file: my_characters
-    _wrap: characters
-    GER_leader:
-      name: "Adolf Hitler"
-      portraits:
-        civilian:
-          large: GFX_portrait_GER_hitler
-      country_leader:
-        ideology: nazism
-        traits: [dictator]
+{"characters": [{"_file": "my_characters", "_wrap": "characters", "GER_leader": {"name": "Adolf Hitler", "portraits": {"civilian": {"large": "GFX_portrait_GER_hitler"}}, "country_leader": {"ideology": "nazism", "traits": ["dictator"]}}}]}
 ```
 
 ### Technologies
 
 ```jsonl
-technologies:
-  - _file: my_techs
-    my_tech:
-      research_cost: 1.5
-      start_year: 1936
-      folder:
-        name: infantry_folder
-        position: { x: 0, y: 0 }
-      path:
-        - leads_to_tech: my_tech_2
-          research_cost_factor: 1
-      categories: [infantry]
-      on_research_complete:
-        add_political_power: 50
+{"technologies": [{"_file": "my_techs", "my_tech": {"research_cost": 1.5, "start_year": 1936, "folder": {"name": "infantry_folder", "position": {"x": 0, "y": 0}}, "path": [{"leads_to_tech": "my_tech_2", "research_cost_factor": 1}], "categories": ["infantry"], "on_research_complete": {"add_political_power": 50}}}]}
 ```
 
 ### Interface / GFX
 
 ```jsonl
-interface:
-  - _file: my_interface
-    sprites:                  # → spriteTypes: { spriteType: [...] }
-      - name: GFX_my_sprite
-        texturefile: "gfx/interface/my_sprite.dds"
+{"interface": [{"_file": "my_interface", "sprites": [{"name": "GFX_my_sprite", "texturefile": "gfx/interface/my_sprite.dds"}]}]}
 ```
 
 ---
@@ -490,18 +376,9 @@ interface:
 State names and country names are automatically resolved:
 
 ```jsonl
-# States: name → ID
-add_state_building:
-  state: berlin       # → resolved to state ID (e.g. 64)
-  type: industrial_complex
-  level: 3
-
-# Countries: name → TAG
-add_opinion_modifier:
-  target: ethiopia    # → ETH
-  modifier: my_modifier
-
-owner: germany        # → GER
+{"add_state_building": {"state": "berlin", "type": "industrial_complex", "level": 3}}
+{"add_opinion_modifier": {"target": "ethiopia", "modifier": "my_modifier"}}
+{"owner": "germany"}
 ```
 
 Use `hoi4yaml --list-states <query>` and `hoi4yaml --list-countries <query>` to look up IDs/TAGs.
@@ -511,25 +388,9 @@ Use `hoi4yaml --list-states <query>` and `hoi4yaml --list-countries <query>` to 
 ## Variables and templates
 
 ```jsonl
-vars:
-  TAG: GER
-  PREFIX: ger_focus
-
-templates:
-  standard_focus:
-    cost: 10
-    ai_will_do: 1
-
-national_focus:
-  - _file: $TAG_focuses
-    focus_tree:
-      focus:
-        - id: $PREFIX_first
-          _template: standard_focus
-          x: 0
-          y: 0
-          reward:
-            add_political_power: 100
+{"vars": {"TAG": "GER", "PREFIX": "ger_focus"}}
+{"templates": {"standard_focus": {"cost": 10, "ai_will_do": 1}}}
+{"national_focus": [{"_file": "$TAG_focuses", "focus_tree": {"focus": [{"id": "$PREFIX_first", "_template": "standard_focus", "x": 0, "y": 0, "reward": {"add_political_power": 100}}]}}]}
 ```
 
 ---
@@ -579,15 +440,7 @@ The following are automatically checked on every run:
 ### add_state_building / add_state_manpower
 
 ```jsonl
-reward:
-  add_state_building:
-    state: berlin          # state name or ID
-    type: industrial_complex
-    level: 3
-    instant: true          # default: true
-  add_state_manpower:
-    state: 64              # state ID
-    value: 10000
+{"reward": {"add_state_building": {"state": "berlin", "type": "industrial_complex", "level": 3, "instant": true}, "add_state_manpower": {"state": 64, "value": 10000}}}
 ```
 
 Expands to:
@@ -601,10 +454,7 @@ Expands to:
 ### timed_idea
 
 ```jsonl
-reward:
-  timed_idea:
-    idea: my_timed_idea
-    days: 180
+{"reward": {"timed_idea": {"idea": "my_timed_idea", "days": 180}}}
 ```
 
 Expands to `add_ideas = my_timed_idea` plus an `if` block that only adds the idea if not already present. The `days` value is informational only — `days_remove` must also be set on the idea definition itself.
@@ -612,24 +462,13 @@ Expands to `add_ideas = my_timed_idea` plus an `if` block that only adds the ide
 Also supports `state_id` as an alternative to `state` in `add_state_building`/`add_state_manpower`:
 
 ```jsonl
-add_state_building:
-  state_id: 64       # use state_id if you already know the numeric ID
-  type: industrial_complex
-  level: 3
+{"add_state_building": {"state_id": 64, "type": "industrial_complex", "level": 3}}
 ```
 
 ### ai_will_do with conditions
 
 ```jsonl
-ai_will_do: 1                  # simple: factor 1
-
-ai_will_do:                    # with conditional modifiers
-  factor: 1
-  if:
-    - has_war: yes
-      mult: 2                  # multiply factor by 2 if at war
-    - tag: GER
-      mult: 0                  # never pick if Germany
+{"ai_will_do": {"factor": 1, "if": [{"has_war": true, "mult": 2}, {"tag": "GER", "mult": 0}]}}
 ```
 
 Expands to:
@@ -644,16 +483,7 @@ ai_will_do = {
 ### support_companies
 
 ```jsonl
-history_units:
-  - _file: GER_1936
-    division_template:
-      - name: "Infantry Division"
-        regiments:
-          - infantry: 9      # value = number of battalions of that type
-          - artillery_brigade: 1
-        support_companies:
-          - engineer: 1
-          - recon: 1
+{"history_units": [{"_file": "GER_1936", "division_template": [{"name": "Infantry Division", "regiments": [{"infantry": 9}, {"artillery_brigade": 1}], "support_companies": [{"engineer": 1}, {"recon": 1}]}]}]}
 ```
 
 `regiments` value is the **count** of battalions. `infantry: 9` creates 9 infantry battalions, auto-assigned to column/row (5 per row). `support_companies` value is always 1 (one company per slot).
@@ -663,373 +493,97 @@ Expands to `regiment = { type = infantry column = 0 row = 0 }` ... `support = { 
 ### Decisions
 
 ```jsonl
-decisions:
-  - _file: my_decisions
-    my_category:              # decision category key (must match decisions_categories)
-      my_decision:
-        icon: generic_political_discourse
-        cost: 50              # political power cost
-        days_remove: 60       # duration (0 = instant)
-        available:            # trigger: when can it be taken
-          tag: GER
-          has_war: no
-        visible:              # trigger: when is it shown (optional)
-          tag: GER
-        modifier:             # ongoing effect while active
-          stability_factor: 0.05
-        complete_effect:      # fires when taken
-          add_political_power: 25
-        remove_effect:        # fires when duration ends
-          add_stability: 0.05
-        ai_will_do:
-          factor: 1
-
-decisions_categories:
-  - _file: my_categories
-    my_category:
-      icon: generic_political_discourse
-      picture: GFX_decision_cat_my_category
+{"decisions": [{"_file": "my_decisions", "my_category": {"my_decision": {"icon": "generic_political_discourse", "cost": 50, "days_remove": 60, "available": {"tag": "GER", "has_war": false}, "visible": {"tag": "GER"}, "modifier": {"stability_factor": 0.05}, "complete_effect": {"add_political_power": 25}, "remove_effect": {"add_stability": 0.05}, "ai_will_do": {"factor": 1}}}}]}
+{"decisions_categories": [{"_file": "my_categories", "my_category": {"icon": "generic_political_discourse", "picture": "GFX_decision_cat_my_category"}}]}
 ```
 
 ### Unit leaders (field_marshal / corps_commander / navy_leader)
 
 ```jsonl
-characters:
-  - _file: my_characters
-    _wrap: characters
-    GER_rommel:
-      name: "Erwin Rommel"
-      portraits:
-        army:
-          large: GFX_portrait_GER_rommel
-      field_marshal:
-        traits: [brilliant_strategist, desert_fox]
-        skill: 4
-        attack_skill: 4
-        defense_skill: 3
-        planning_skill: 4
-        logistics_skill: 3
-    GER_guderian:
-      name: "Heinz Guderian"
-      portraits:
-        army:
-          large: GFX_portrait_GER_guderian
-      corps_commander:
-        traits: [panzer_leader, fast_planner]
-        skill: 4
-        attack_skill: 5
-        defense_skill: 2
-        planning_skill: 4
-        logistics_skill: 3
-    GER_raeder:
-      name: "Erich Raeder"
-      portraits:
-        navy:
-          large: GFX_portrait_GER_raeder
-      navy_leader:
-        traits: [fleet_in_being_expert]
-        skill: 3
-        attack_skill: 3
-        defense_skill: 3
-        maneuvering_skill: 2
-        coordination_skill: 3
+{"characters": [{"_file": "my_characters", "_wrap": "characters", "GER_rommel": {"name": "Erwin Rommel", "portraits": {"army": {"large": "GFX_portrait_GER_rommel"}}, "field_marshal": {"traits": ["brilliant_strategist", "desert_fox"], "skill": 4, "attack_skill": 4, "defense_skill": 3, "planning_skill": 4, "logistics_skill": 3}}, "GER_guderian": {"name": "Heinz Guderian", "portraits": {"army": {"large": "GFX_portrait_GER_guderian"}}, "corps_commander": {"traits": ["panzer_leader", "fast_planner"], "skill": 4, "attack_skill": 5, "defense_skill": 2, "planning_skill": 4, "logistics_skill": 3}}, "GER_raeder": {"name": "Erich Raeder", "portraits": {"navy": {"large": "GFX_portrait_GER_raeder"}}, "navy_leader": {"traits": ["fleet_in_being_expert"], "skill": 3, "attack_skill": 3, "defense_skill": 3, "maneuvering_skill": 2, "coordination_skill": 3}}}]}
 ```
 
 ### on_actions
 
 ```jsonl
-on_actions:
-  - _file: my_on_actions
-    on_startup:
-      effect:
-        GER = { add_political_power: 50 }
-    on_monthly_GER:
-      effect:
-        add_political_power: 5
-    on_war_won:
-      effect:
-        add_stability: 0.05
+{"on_actions": [{"_file": "my_on_actions", "on_startup": {"effect": {"GER = { add_political_power": "50 }"}}, "on_monthly_GER": {"effect": {"add_political_power": 5}}, "on_war_won": {"effect": {"add_stability": 0.05}}}]}
 ```
 
 ### scripted_triggers / scripted_effects
 
 ```jsonl
-scripted_triggers:
-  - _file: my_triggers
-    my_is_major_democracy:
-      is_major: yes
-      has_government: democratic
-
-scripted_effects:
-  - _file: my_effects
-    my_boost_industry:
-      add_ideas: my_industry_spirit
-      add_political_power: 50
+{"scripted_triggers": [{"_file": "my_triggers", "my_is_major_democracy": {"is_major": true, "has_government": "democratic"}}]}
+{"scripted_effects": [{"_file": "my_effects", "my_boost_industry": {"add_ideas": "my_industry_spirit", "add_political_power": 50}}]}
 ```
 
 Use them in other blocks:
 
 ```jsonl
-reward:
-  my_boost_industry: yes    # calls the scripted effect
-
-trigger:
-  my_is_major_democracy: yes  # calls the scripted trigger
+{"reward": {"my_boost_industry": true}}
+{"trigger": {"my_is_major_democracy": true}}
 ```
 
 ### Complete minimal mod example
 
 ```jsonl
-mod:
-  name: My First Mod
-  version: "1.0"
-  supported_version: "1.14.*"
-
-national_focus:
-  - _file: GER_focuses
-    focus_tree:
-      id: GER_focus_tree
-      country:
-        factor: 0
-        modifier:
-          add: 10
-          tag: GER
-      focus:
-        - id: GER_rearm
-          x: 0
-          y: 0
-          cost: 10
-          reward:
-            add_political_power: 100
-
-ideas:
-  - _file: GER_ideas
-    _category: country
-    GER_war_economy:
-      picture: generic_production_bonus
-      removal_cost: -1
-      modifier:
-        industrial_capacity_factory: 0.1
-
-decisions:
-  - _file: GER_decisions
-    GER_political:
-      GER_rally_the_nation:
-        icon: generic_political_discourse
-        cost: 50
-        days_remove: 30
-        available:
-          tag: GER
-        complete_effect:
-          add_stability: 0.05
-
-characters:
-  - _file: GER_characters
-    _wrap: characters
-    GER_hitler:
-      name: "Adolf Hitler"
-      portraits:
-        civilian:
-          large: GFX_portrait_GER_Hitler
-      country_leader:
-        ideology: nazism
-        traits: [dictator]
-
-events:
-  - _file: GER_events
-    country_event:
-      - id: GER_events.1
-        is_triggered_only: yes
-        option:
-          - name: GER_events.1.a
-            add_political_power: 50
-
-opinion_modifiers:
-  - _file: GER_opinion_modifiers
-    _wrap: opinion_modifiers
-    GER_rival:
-      value: -30
-      decay: 1
-      min: -30
-
-history_countries:
-  - _file: GER
-    capital: 11650
-    set_tech:
-      - infantry_weapons
-      - tech_support
-    set_ruling_party: fascism
-    add_pop:
-      fascism: 0.5
-    recruit_character: GER_hitler
-
-localisation:
-  english:
-    GER_rearm: "Rearmament"
-    GER_rearm_desc: "Germany begins its secret rearmament program."
-    GER_war_economy: "War Economy"
-    GER_war_economy_desc: "The nation's industry is geared toward military production."
-    GER_rally_the_nation: "Rally the Nation"
-    GER_rally_the_nation_desc: "A nationwide rally to boost morale."
-    GER_events.1.t: "A New Dawn"
-    GER_events.1.d: "Germany stands at a crossroads."
-    GER_events.1.a: "Press forward."
-    GER_hitler: "Adolf Hitler"
-    GER_rival: "Rival Nation"
+{"mod": {"name": "My First Mod", "version": "1.0", "supported_version": "1.14.*"}}
+{"national_focus": [{"_file": "GER_focuses", "focus_tree": {"id": "GER_focus_tree", "country": {"factor": 0, "modifier": {"add": 10, "tag": "GER"}}, "focus": [{"id": "GER_rearm", "x": 0, "y": 0, "cost": 10, "reward": {"add_political_power": 100}}]}}]}
+{"ideas": [{"_file": "GER_ideas", "_category": "country", "GER_war_economy": {"picture": "generic_production_bonus", "removal_cost": -1, "modifier": {"industrial_capacity_factory": 0.1}}}]}
+{"decisions": [{"_file": "GER_decisions", "GER_political": {"GER_rally_the_nation": {"icon": "generic_political_discourse", "cost": 50, "days_remove": 30, "available": {"tag": "GER"}, "complete_effect": {"add_stability": 0.05}}}}]}
+{"characters": [{"_file": "GER_characters", "_wrap": "characters", "GER_hitler": {"name": "Adolf Hitler", "portraits": {"civilian": {"large": "GFX_portrait_GER_Hitler"}}, "country_leader": {"ideology": "nazism", "traits": ["dictator"]}}}]}
+{"events": [{"_file": "GER_events", "country_event": [{"id": "GER_events.1", "is_triggered_only": true, "option": [{"name": "GER_events.1.a", "add_political_power": 50}]}]}]}
+{"opinion_modifiers": [{"_file": "GER_opinion_modifiers", "_wrap": "opinion_modifiers", "GER_rival": {"value": -30, "decay": 1, "min": -30}}]}
+{"history_countries": [{"_file": "GER", "capital": 11650, "set_tech": ["infantry_weapons", "tech_support"], "set_ruling_party": "fascism", "add_pop": {"fascism": 0.5}, "recruit_character": "GER_hitler"}]}
+{"localisation": {"english": {"GER_rearm": "Rearmament", "GER_rearm_desc": "Germany begins its secret rearmament program.", "GER_war_economy": "War Economy", "GER_war_economy_desc": "The nation's industry is geared toward military production.", "GER_rally_the_nation": "Rally the Nation", "GER_rally_the_nation_desc": "A nationwide rally to boost morale.", "GER_events.1.t": "A New Dawn", "GER_events.1.d": "Germany stands at a crossroads.", "GER_events.1.a": "Press forward.", "GER_hitler": "Adolf Hitler", "GER_rival": "Rival Nation"}}}
 ```
 
 ### history_states
 
 ```jsonl
-history_states:
-  - _file: 64_berlin
-    state:
-      id: 64
-      name: STATE_64
-      manpower: 500000
-      state_category: megalopolis
-      history:
-        owner: GER
-        controller: GER
-        add_core_of: GER
-        victory_points:
-          - [11650, 10]       # [province_id, value]
-        buildings:
-          infrastructure: 5
-          industrial_complex: 3
-          arms_factory: 2
-          air_base: 2
-          11650:              # province-level buildings
-            naval_base: 3
-      resources:
-        steel: 8
-        aluminium: 4
-      provinces:
-        - 11650
-        - 11651
+{"history_states": [{"_file": "64_berlin", "state": {"id": 64, "name": "STATE_64", "manpower": 500000, "state_category": "megalopolis", "history": {"owner": "GER", "controller": "GER", "add_core_of": "GER", "victory_points": [[11650, 10]], "buildings": {"infrastructure": 5, "industrial_complex": 3, "arms_factory": 2, "air_base": 2, "11650": {"naval_base": 3}}}, "resources": {"steel": 8, "aluminium": 4}, "provinces": [11650, 11651]}}]}
 ```
 
 ### technologies
 
 ```jsonl
-technologies:
-  - _file: my_infantry_techs
-    my_infantry_1:
-      research_cost: 1.0
-      start_year: 1936
-      folder:
-        name: infantry_folder
-        position: { x: 0, y: 0 }
-      path:
-        - leads_to_tech: my_infantry_2
-          research_cost_factor: 1
-      categories: [infantry_weapons]
-      on_research_complete:
-        add_political_power: 25
-
-    my_infantry_2:
-      research_cost: 1.5
-      start_year: 1938
-      folder:
-        name: infantry_folder
-        position: { x: 0, y: 2 }
-      categories: [infantry_weapons]
+{"technologies": [{"_file": "my_infantry_techs", "my_infantry_1": {"research_cost": 1.0, "start_year": 1936, "folder": {"name": "infantry_folder", "position": {"x": 0, "y": 0}}, "path": [{"leads_to_tech": "my_infantry_2", "research_cost_factor": 1}], "categories": ["infantry_weapons"], "on_research_complete": {"add_political_power": 25}}, "my_infantry_2": {"research_cost": 1.5, "start_year": 1938, "folder": {"name": "infantry_folder", "position": {"x": 0, "y": 2}}, "categories": ["infantry_weapons"]}}]}
 ```
 
 ### dynamic_modifiers
 
 ```jsonl
-dynamic_modifiers:
-  - _file: my_dynamic_modifiers
-    my_war_effort:
-      icon: GFX_idea_my_war_effort
-      enable:
-        has_war: yes
-      remove:
-        has_war: no
-      modifier:
-        industrial_capacity_factory:
-          var: my_war_effort_bonus
-          multiply: 1
+{"dynamic_modifiers": [{"_file": "my_dynamic_modifiers", "my_war_effort": {"icon": "GFX_idea_my_war_effort", "enable": {"has_war": true}, "remove": {"has_war": false}, "modifier": {"industrial_capacity_factory": {"var": "my_war_effort_bonus", "multiply": 1}}}}]}
 ```
 
 ### bookmarks (start scenarios)
 
 ```jsonl
-bookmarks:
-  - _file: my_bookmark
-    bookmark:
-      name: MY_BOOKMARK
-      desc: MY_BOOKMARK_DESC
-      date: 1936.1.1
-      picture: GFX_select_date_1936
-      default_country: GER
-      default: yes
-      country:
-        - GER
-        - FRA
-        - ENG
+{"bookmarks": [{"_file": "my_bookmark", "bookmark": {"name": "MY_BOOKMARK", "desc": "MY_BOOKMARK_DESC", "date": "1936.1.1", "picture": "GFX_select_date_1936", "default_country": "GER", "default": true, "country": ["GER", "FRA", "ENG"]}}]}
 ```
 
 ### autonomy
 
 ```jsonl
-autonomy:
-  - _file: my_autonomy
-    autonomy_free:
-      min_level: 0
-      max_level: 0
-      manpower_influence: 0
-      can_send_volunteers: yes
-      can_be_called_to_war: no
-      modifier:
-        autonomy_manpower_share: 0
+{"autonomy": [{"_file": "my_autonomy", "autonomy_free": {"min_level": 0, "max_level": 0, "manpower_influence": 0, "can_send_volunteers": true, "can_be_called_to_war": false, "modifier": {"autonomy_manpower_share": 0}}}]}
 ```
 
 ### portraits
 
 ```jsonl
-portraits:
-  - _file: my_portraits
-    GER:
-      army:
-        male:
-          - "gfx/leaders/GER/portrait_ger_generic_1.dds"
-          - "gfx/leaders/GER/portrait_ger_generic_2.dds"
-      civilian:
-        male:
-          - "gfx/leaders/GER/portrait_ger_civ_generic_1.dds"
+{"portraits": [{"_file": "my_portraits", "GER": {"army": {"male": ["gfx/leaders/GER/portrait_ger_generic_1.dds", "gfx/leaders/GER/portrait_ger_generic_2.dds"]}, "civilian": {"male": ["gfx/leaders/GER/portrait_ger_civ_generic_1.dds"]}}}]}
 ```
 
 ### country_colors
 
 ```jsonl
-country_colors:
-  - _file: my_country_colors
-    MY_TAG:
-      color: [0.5, 0.2, 0.1]    # → color + color_ui both set automatically
-      color_ui: [0.6, 0.3, 0.2] # optional override
+{"country_colors": [{"_file": "my_country_colors", "MY_TAG": {"color": [0.5, 0.2, 0.1], "color_ui": [0.6, 0.3, 0.2]}}]}
 ```
 
 ### _if (conditional entries)
 
 ```jsonl
-vars:
-  DEBUG: false
-
-national_focus:
-  - _file: GER_focuses
-    focus_tree:
-      focus:
-        - id: GER_focus_1
-          x: 0
-          y: 0
-          reward:
-            add_political_power: 100
-        - _if: $DEBUG           # skipped when DEBUG=false
-          id: GER_debug_focus
-          x: 0
-          y: 1
+{"vars": {"DEBUG": false}}
+{"national_focus": [{"_file": "GER_focuses", "focus_tree": {"focus": [{"id": "GER_focus_1", "x": 0, "y": 0, "reward": {"add_political_power": 100}}, {"_if": "$DEBUG", "id": "GER_debug_focus", "x": 0, "y": 1}]}}]}
 ```
 
 `_if` must be Python `false` (boolean), not a string.
@@ -1037,13 +591,7 @@ national_focus:
 ### sprites
 
 ```jsonl
-interface:
-  - _file: my_interface
-    sprites:
-      - name: GFX_my_focus
-        texturefile: "gfx/interface/my_focus.dds"
-      - name: GFX_my_idea
-        texturefile: "gfx/interface/my_idea.dds"
+{"interface": [{"_file": "my_interface", "sprites": [{"name": "GFX_my_focus", "texturefile": "gfx/interface/my_focus.dds"}, {"name": "GFX_my_idea", "texturefile": "gfx/interface/my_idea.dds"}]}]}
 ```
 
 Expands to `spriteTypes = { spriteType = [ ... ] }`.
@@ -1053,10 +601,7 @@ Expands to `spriteTypes = { spriteType = [ ... ] }`.
 `set_tech` works anywhere an effect is valid:
 
 ```jsonl
-reward:
-  set_tech:
-    - infantry_weapons
-    - tech_support
+{"reward": {"set_tech": ["infantry_weapons", "tech_support"]}}
 ```
 
 ### _namespace default
@@ -1064,19 +609,14 @@ reward:
 If `_namespace` is omitted, it defaults to the value of `_file`:
 
 ```jsonl
-events:
-  - _file: my_events          # namespace = "my_events" automatically
-    country_event:
-      - id: my_events.1       # must start with "my_events."
+{"events": [{"_file": "my_events", "country_event": [{"id": "my_events.1"}]}]}
 ```
 
 ### prereq AND vs OR
 
 ```jsonl
-prereq: A                     # prerequisite: { focus: A }
-prereq: [A, B]                # prerequisite: { focus: [A, B] }  — both required (AND)
-prereq_or: [A, B]             # prerequisite: { focus: A }
-                              # prerequisite: { focus: B }       — either one (OR)
+{"prereq": ["A", "B"]}
+{"prereq_or": ["A", "B"]}
 ```
 
 ### Cache file
@@ -1086,11 +626,7 @@ prereq_or: [A, B]             # prerequisite: { focus: A }
 ---
 
 ```jsonl
-# color is automatically copied to color_ui if color_ui is omitted
-named_colors:
-  - _file: my_colors
-    my_color:
-      color: [0.5, 0.2, 0.1]   # → color + color_ui both set
+{"named_colors": [{"_file": "my_colors", "my_color": {"color": [0.5, 0.2, 0.1]}}]}
 ```
 
 ---
@@ -1121,16 +657,8 @@ hoi4yaml --import path/to/dir        # convert Clausewitz files → YAML
 `$VAR` substitution works everywhere in the file, including `_file`, `_namespace`, and all keys/values:
 
 ```jsonl
-vars:
-  TAG: GER
-  PREFIX: ger
-
-national_focus:
-  - _file: $TAG_focuses        # → GER_focuses.txt
-    _namespace: $PREFIX        # → ger
-    focus_tree:
-      focus:
-        - id: $PREFIX_first_focus
+{"vars": {"TAG": "GER", "PREFIX": "ger"}}
+{"national_focus": [{"_file": "$TAG_focuses", "_namespace": "$PREFIX", "focus_tree": {"focus": [{"id": "$PREFIX_first_focus"}]}}]}
 ```
 
 ```bash
@@ -1155,11 +683,7 @@ Lists are concatenated, dicts are merged. Useful for organizing large mods.
 Load GFX keys, traits, states, ideologies, and localisation keys from other installed mods to avoid false validation warnings:
 
 ```jsonl
-mod:
-  name: My Mod
-  mod_paths:
-    - C:/Users/.../mod/kaiserreich
-    - C:/Users/.../mod/road_to_56
+{"mod": {"name": "My Mod", "mod_paths": ["C:/Users/.../mod/kaiserreich", "C:/Users/.../mod/road_to_56"]}}
 ```
 
 ---
@@ -1168,51 +692,28 @@ mod:
 
 **opinion_modifiers must be wrapped:**
 ```jsonl
-opinion_modifiers:
-  - _file: my_file
-    _wrap: opinion_modifiers   # without this, HoI4 won't load the file
-    my_modifier:
-      value: 30
+{"opinion_modifiers": [{"_file": "my_file", "_wrap": "opinion_modifiers", "my_modifier": {"value": 30}}]}
 ```
 
 **Multiple blocks of the same key — use a list:**
 ```jsonl
-# WRONG — second entry silently overwrites first
-add_opinion_modifier:
-  target: ETH
-  modifier: X
-add_opinion_modifier:
-  target: SAF
-  modifier: X
-
-# CORRECT
-add_opinion_modifier:
-  - target: ETH
-    modifier: X
-  - target: SAF
-    modifier: X
+{"add_opinion_modifier": [{"target": "ETH", "modifier": "X"}, {"target": "SAF", "modifier": "X"}]}
 ```
 
 **Event namespace must match ID prefix:**
 ```jsonl
-events:
-  - _file: my_events
-    _namespace: my_mod    # event IDs must start with "my_mod."
-    country_event:
-      - id: my_mod.1
+{"events": [{"_file": "my_events", "_namespace": "my_mod", "country_event": [{"id": "my_mod.1"}]}]}
 ```
 
 **capital takes province ID, not state ID:**
 ```jsonl
-history_countries:
-  - _file: GER
-    capital: 11650    # province ID (> 1000), NOT state ID
+{"history_countries": [{"_file": "GER", "capital": 11650}]}
 ```
 
 **add_core_of vs add_core:**
 ```jsonl
-add_core_of: GER    # takes TAG
-add_core: 64        # takes state ID
+{"add_core_of": "GER"}
+{"add_core": 64}
 ```
 
 ---
@@ -1222,23 +723,13 @@ add_core: 64        # takes state ID
 Rename a country's displayed name/flag without changing its TAG:
 
 ```jsonl
-cosmetic_tags:
-  - _file: my_cosmetic_tags
-    GER_GREATER_GERMANY:
-      name: GREATER_GERMANY
-      adjective: GREATER_GERMANY_ADJ
-      flag: GER_GREATER_GERMANY    # looks for gfx/flags/GER_GREATER_GERMANY.tga
-
-localisation:
-  english:
-    GREATER_GERMANY: "Greater Germany"
-    GREATER_GERMANY_ADJ: "Greater German"
+{"cosmetic_tags": [{"_file": "my_cosmetic_tags", "GER_GREATER_GERMANY": {"name": "GREATER_GERMANY", "adjective": "GREATER_GERMANY_ADJ", "flag": "GER_GREATER_GERMANY"}}]}
+{"localisation": {"english": {"GREATER_GERMANY": "Greater Germany", "GREATER_GERMANY_ADJ": "Greater German"}}}
 ```
 
 Apply in-game:
 ```jsonl
-reward:
-  set_cosmetic_tag: GER_GREATER_GERMANY
+{"reward": {"set_cosmetic_tag": "GER_GREATER_GERMANY"}}
 ```
 
 ---
@@ -1246,29 +737,12 @@ reward:
 ## wargoals
 
 ```jsonl
-wargoals:
-  - _file: my_wargoals
-    my_wargoal:
-      icon: generic_conquest
-      allowed:
-        always: yes
-      available:
-        has_war: no
-      ai_will_do:
-        factor: 1
-      on_add:
-        add_political_power: -50
-      peace_options:
-        - transfer_state
-        - puppet
+{"wargoals": [{"_file": "my_wargoals", "my_wargoal": {"icon": "generic_conquest", "allowed": {"always": true}, "available": {"has_war": false}, "ai_will_do": {"factor": 1}, "on_add": {"add_political_power": -50}, "peace_options": ["transfer_state", "puppet"]}}]}
 ```
 
 Use in effects:
 ```jsonl
-reward:
-  create_wargoal:
-    type: my_wargoal
-    target: FRA
+{"reward": {"create_wargoal": {"type": "my_wargoal", "target": "FRA"}}}
 ```
 
 ---
@@ -1291,14 +765,7 @@ ideas = {
 
 Output (`imported.yaml`):
 ```jsonl
-ideas:
-  - _file: GER_ideas
-    ideas:
-      country:
-        GER_war_economy:
-          picture: generic_production_bonus
-          modifier:
-            industrial_capacity_factory: 0.1
+{"ideas": [{"_file": "GER_ideas", "ideas": {"country": {"GER_war_economy": {"picture": "generic_production_bonus", "modifier": {"industrial_capacity_factory": 0.1}}}}}]}
 ```
 
 Note: imported YAML may need manual cleanup (e.g. adding `_category`, `_wrap`, shorthands).
@@ -1310,11 +777,7 @@ Note: imported YAML may need manual cleanup (e.g. adding `_category`, `_wrap`, s
 Load GFX keys, traits, states, ideologies, and localisation keys from other installed mods to suppress false validation warnings:
 
 ```jsonl
-mod:
-  name: My Mod
-  mod_paths:
-    - "/mnt/c/Users/me/Documents/Paradox Interactive/Hearts of Iron IV/mod/kaiserreich"
-    - "/mnt/c/Users/me/Documents/Paradox Interactive/Hearts of Iron IV/mod/road_to_56"
+{"mod": {"name": "My Mod", "mod_paths": ["/mnt/c/Users/me/Documents/Paradox Interactive/Hearts of Iron IV/mod/kaiserreich", "/mnt/c/Users/me/Documents/Paradox Interactive/Hearts of Iron IV/mod/road_to_56"]}}
 ```
 
 Useful when your mod references GFX sprites, traits, or ideas defined in another mod.
