@@ -32,11 +32,22 @@ def gen_section(mod_dir, entries, subdir, ext="txt", **kw):
 ALL_LANGS = ["english", "french", "german", "spanish", "russian", "polish", "braz_por", "japanese", "korean"]
 
 
+def _get_all_langs():
+    from .gamedata import find_hoi4_path
+    hoi4 = find_hoi4_path()
+    if hoi4:
+        p = hoi4 / "localisation" / "languages.yml"
+        if p.exists():
+            import re
+            return re.findall(r'^l_(\w+):', p.read_text(encoding="utf-8-sig"), re.MULTILINE)
+    return ALL_LANGS
+
+
 def gen_localisation(mod_dir, loc, **kw):
     if loc and isinstance(next(iter(loc.values())), dict):
         english = loc.get("english", {})
         # auto-fill all languages not explicitly specified
-        langs = {lang: loc.get(lang, {}) for lang in ALL_LANGS}
+        langs = {lang: loc.get(lang, {}) for lang in _get_all_langs()}
         for lang, entries in langs.items():
             merged = {**english, **entries} if lang != "english" else entries
             if not merged:
