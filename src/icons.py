@@ -119,8 +119,9 @@ _idea_hints = None
 
 
 def learn_idea_hints(hoi4_path):
-    """Learn word→picture mapping from game idea files."""
+    """Learn word→picture mapping from game idea files + localisation."""
     word_pic = defaultdict(Counter)
+    idea_pics = {}  # idea_id → picture
     for f in (hoi4_path / "common/ideas").glob("*.txt"):
         text = f.read_text(encoding="utf-8-sig", errors="ignore")
         for m in re.finditer(
@@ -128,35 +129,82 @@ def learn_idea_hints(hoi4_path):
             text, re.DOTALL
         ):
             idea_id, pic = m.group(1).lower(), m.group(2)
+            idea_pics[idea_id] = pic
             words = [w for w in idea_id.split("_") if w and w not in _SKIP_WORDS and len(w) > 3]
             for word in words:
                 word_pic[word][pic] += 1
             for i in range(len(words) - 1):
                 word_pic[f"{words[i]}_{words[i+1]}"][pic] += 1
-    return {w: c.most_common(1)[0][0] for w, c in word_pic.items()}
+
+    # also learn from localisation text
+    idea_loc_words = {}
+    loc_dir = hoi4_path / "localisation" / "english"
+    if not loc_dir.exists():
+        loc_dir = hoi4_path / "localisation"
+    for f in loc_dir.rglob("*.yml"):
+        try:
+            text = f.read_text(encoding="utf-8-sig", errors="ignore")
+        except Exception:
+            continue
+        for m in re.finditer(r'^\s*(\w+):0\s+"([^"]+)"', text, re.MULTILINE):
+            key = m.group(1).lower()
+            if key in idea_pics:
+                words = frozenset(
+                    w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', m.group(2))
+                    if w.lower() not in _SKIP_WORDS
+                )
+                if words:
+                    idea_loc_words[key] = words
+                    for word in words:
+                        word_pic[word][idea_pics[key]] += 1
+
+    return {w: c.most_common(1)[0][0] for w, c in word_pic.items()}, idea_pics, idea_loc_words
+
+
+_idea_loc_words = {}
+_idea_pics = {}
 
 
 def get_idea_hints():
-    global _idea_hints
+    global _idea_hints, _idea_pics, _idea_loc_words
     if _idea_hints is None:
         cache = _load_cache()
         if cache and "idea_hints" in cache:
             _idea_hints = cache["idea_hints"]
+            _idea_pics = cache.get("idea_pics", {})
+            _idea_loc_words = {k: frozenset(v) for k, v in cache.get("idea_loc_words", {}).items()}
         else:
             hoi4 = find_hoi4_path()
             if hoi4:
-                _idea_hints = learn_idea_hints(hoi4)
+                _idea_hints, _idea_pics, _idea_loc_words = learn_idea_hints(hoi4)
                 c = _load_cache() or {}
-                c["idea_hints"] = _idea_hints
+                c.update({"idea_hints": _idea_hints, "idea_pics": _idea_pics,
+                          "idea_loc_words": {k: list(v) for k, v in _idea_loc_words.items()}})
                 _save_cache(c)
             else:
-                _idea_hints = {}
+                _idea_hints, _idea_pics, _idea_loc_words = {}, {}, {}
     return _idea_hints
 
 
 def guess_picture(idea_id):
-    """Guess idea picture from ID keywords."""
+    """Guess idea picture from localisation text + ID keywords."""
     hints = get_idea_hints()
+    # semantic match via localisation text
+    loc_text = _mod_localisation.get(idea_id, "")
+    if loc_text and _idea_loc_words:
+        query = frozenset(
+            w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', loc_text)
+            if w.lower() not in _SKIP_WORDS
+        )
+        if query:
+            best_score, best_pic = 0.0, None
+            for iid, iwords in _idea_loc_words.items():
+                score = len(query & iwords) / len(query | iwords)
+                if score > best_score:
+                    best_score, best_pic = score, _idea_pics[iid]
+            if best_score >= 0.15:
+                return best_pic
+    # keyword match via ID
     words = [w for w in idea_id.lower().split("_") if w not in _SKIP_WORDS and len(w) > 3]
     for i in range(len(words) - 1, 0, -1):
         if f"{words[i-1]}_{words[i]}" in hints:
@@ -165,23 +213,6 @@ def guess_picture(idea_id):
         if word in hints:
             return hints[word]
     return None
-    global _icon_hints, _focus_icons, _focus_loc_words
-    if _icon_hints is None:
-        cache = _load_cache()
-        if cache and "icon_hints" in cache:
-            _icon_hints = cache["icon_hints"]
-            _focus_icons = cache.get("focus_icons", {})
-            _focus_loc_words = {k: frozenset(v) for k, v in cache.get("focus_loc_words", {}).items()}
-        else:
-            hoi4 = find_hoi4_path()
-            if hoi4:
-                _icon_hints, _focus_icons, _focus_loc_words = learn_icon_hints(hoi4)
-                c = _load_cache() or {}
-                c.update({"icon_hints": _icon_hints, "focus_icons": _focus_icons,
-                          "focus_loc_words": {k: list(v) for k, v in _focus_loc_words.items()}})
-                _save_cache(c)
-            else:
-                _icon_hints, _focus_icons, _focus_loc_words = ICON_HINTS_FALLBACK, {}, {}
     return _icon_hints
 
 
