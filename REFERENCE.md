@@ -515,6 +515,29 @@ hoi4yaml --list                      # show all sections, shorthands, validation
 hoi4yaml --list-states japan         # search state IDs by name
 hoi4yaml --list-countries ger        # search country TAGs by name
 hoi4yaml --import path/to/dir        # convert Clausewitz files → YAML
+```
+
+`--import` saves output to `imported.yaml` in the current directory. Each file becomes a top-level key named after the filename stem.
+
+### vars substitution scope
+
+`$VAR` substitution works everywhere in the file, including `_file`, `_namespace`, and all keys/values:
+
+```yaml
+vars:
+  TAG: GER
+  PREFIX: ger
+
+national_focus:
+  - _file: $TAG_focuses        # → GER_focuses.txt
+    _namespace: $PREFIX        # → ger
+    focus_tree:
+      focus:
+        - id: $PREFIX_first_focus
+```
+
+```bash
+hoi4yaml --import path/to/dir        # convert Clausewitz files → YAML
 hoi4yaml --init                      # create mod.yaml scaffold
 ```
 
