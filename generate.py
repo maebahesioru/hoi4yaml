@@ -136,6 +136,7 @@ SECTIONS = {
     "scripted_diplomatic_actions": ("common/scripted_diplomatic_actions", "txt"),
     "defines":               ("common/defines",                     "lua"),
     "history_countries":     ("history/countries",                  "txt"),
+    "history_general":       ("history/general",                    "txt"),
     "history_states":        ("history/states",                     "txt"),
     "history_units":         ("history/units",                      "txt"),
     "history_provinces":     ("history/provinces",                  "txt"),
