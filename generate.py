@@ -151,6 +151,9 @@ SECTIONS = {
     "gfx_posteffect":        ("gfx",                               "txt"),
     "gfx_3dviewenv":         ("gfx/3dviewenv",                     "txt"),
     "gfx_equipment_icons":   ("gfx/interface/equipmentdesigner/graphic_db", "txt"),
+    "gfx_entities":          ("gfx/entities",                      "asset"),
+    "gfx_particles":         ("gfx/particles",                     "asset"),
+    "gfx_models":            ("gfx/models",                        "asset"),
     "music":                 ("music",                              "asset"),
     "sound":                 ("sound",                              "asset"),
 }
