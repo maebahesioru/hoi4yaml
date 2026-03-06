@@ -29,11 +29,18 @@ def gen_section(mod_dir, entries, subdir, ext="txt", **kw):
         write(mod_dir / subdir / f"{filename}.{ext}", "\n".join(parts) + "\n", **kw)
 
 
+ALL_LANGS = ["english", "french", "german", "spanish", "russian", "polish", "braz_por", "japanese", "korean"]
+
+
 def gen_localisation(mod_dir, loc, **kw):
     if loc and isinstance(next(iter(loc.values())), dict):
         english = loc.get("english", {})
-        for lang, entries in loc.items():
+        # auto-fill all languages not explicitly specified
+        langs = {lang: loc.get(lang, {}) for lang in ALL_LANGS}
+        for lang, entries in langs.items():
             merged = {**english, **entries} if lang != "english" else entries
+            if not merged:
+                continue
             lines = [f"l_{lang}:"] + [f' {k}:0 "{v}"' for k, v in merged.items()]
             write(mod_dir / "localisation" / f"mod_l_{lang}.yml", "\n".join(lines) + "\n", **kw)
     else:
