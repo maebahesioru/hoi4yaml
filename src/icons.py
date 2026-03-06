@@ -278,16 +278,19 @@ def auto_layout_focuses(focuses):
 
     counter = [0]
     fixed_ids = {f.get("id") for f in focuses if "x" in f or "rel_pos" in f}
-    def assign_x(fid):
+    def assign_x(fid, depth=0):
         kids = [k for k in children.get(fid, []) if k not in x_map]
         if fid in x_map:
             counter[0] = max(counter[0], x_map[fid] + 2)
-            for kid in kids: assign_x(kid)
+            for kid in kids: assign_x(kid, depth + 1)
             return
         if not kids:
             x_map[fid] = counter[0]; counter[0] += 2
         else:
-            for kid in kids: assign_x(kid)
+            for i, kid in enumerate(kids):
+                assign_x(kid, depth + 1)
+                if depth == 0 and i < len(kids) - 1:
+                    counter[0] += 2  # gap between top-level branches
             xs = [x_map[k] for k in children.get(fid, []) if k in x_map]
             if xs:
                 center = (min(xs) + max(xs)) // 2
@@ -297,6 +300,7 @@ def auto_layout_focuses(focuses):
 
     for root in sorted(roots, key=lambda fid: x_map.get(fid, float('inf'))):
         assign_x(root)
+        counter[0] += 2  # gap between roots
 
     multi_prereq = {fid for fid in prereq_map
                     if len([p for p in prereq_map[fid] if p in prereq_map]) > 1}

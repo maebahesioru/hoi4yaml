@@ -1,6 +1,6 @@
 # hoi4yaml — Complete Reference
 
-YAML → HoI4 mod files generator. Designed for AI-assisted modding.
+JSONL → HoI4 mod files generator. Designed for AI-assisted modding.
 
 GitHub: https://github.com/maebahesioru/hoi4yaml
 
@@ -12,64 +12,45 @@ GitHub: https://github.com/maebahesioru/hoi4yaml
 pip install git+https://github.com/maebahesioru/hoi4yaml.git
 ```
 
-Or clone and install locally:
-
-```bash
-git clone https://github.com/maebahesioru/hoi4yaml.git
-cd hoi4yaml
-pip install -e .
-```
-
 ---
 
 ## CLI
 
 ```bash
-hoi4yaml mod.yaml              # generate mod files
-hoi4yaml mod.yaml --clean      # delete output first, then generate
-hoi4yaml mod.yaml --check      # validate only, no output
-hoi4yaml mod.yaml --diff       # write changed files only
-hoi4yaml mod.yaml --dry-run    # show what would be written, no output
-hoi4yaml mod.yaml --zip        # generate + zip
-hoi4yaml --list                # show all sections, shorthands, validations
-hoi4yaml --list-states japan   # search state IDs by name
-hoi4yaml --list-countries ger  # search country TAGs by name
-hoi4yaml --import path/to/dir  # convert Clausewitz files → YAML
-hoi4yaml --init                # create mod.yaml scaffold
+hoi4yaml mod.jsonl              # generate mod files
+hoi4yaml mod.jsonl --clean      # delete output first, then generate
+hoi4yaml mod.jsonl --check      # validate only, no output
+hoi4yaml mod.jsonl --diff       # write changed files only
+hoi4yaml mod.jsonl --dry-run    # show what would be written, no output
+hoi4yaml mod.jsonl --zip        # generate + zip
+hoi4yaml --list                 # show all sections, shorthands, validations
+hoi4yaml --list-states japan    # search state IDs by name
+hoi4yaml --list-countries ger   # search country TAGs by name
 ```
 
 Output goes to `output/<mod_name>/`.
 
 ---
 
-## mod.yaml structure
+## JSONL Format
 
-Every mod.yaml has a `mod:` block at the top, followed by sections.
+One JSON object per line. Objects with the same section key are merged.
 
-```yaml
-mod:
-  name: My Mod
-  version: "1.0.0"
-  supported_version: "1.14.*"
-  tags: [Historical]
-  # mod_paths: [path/to/other/mod]  # optional: load GFX/traits/states from other mods
-
-vars:
-  TAG: GER   # use as $TAG anywhere in the file
-
-templates:
-  my_template:
-    cost: 10
-    ai_will_do: 1
-
-localisation:
-  english:
-    MY_key: "My Text"
-  japanese:
-    MY_key: "テキスト"
+```jsonl
+{"mod":{"name":"My Mod","version":"1.0.0","supported_version":"1.14.*"}}
+{"focus_tree":{"_file":"GER_focuses","id":"GER_focus_tree","country":{"factor":0,"modifier":{"add":10,"tag":"GER"}}}}
+{"focus":{"id":"GER_rearm","cost":10,"reward":{"add_political_power":100}},"loc":{"GER_rearm":"Rearmament","GER_rearm_desc":"Begin rearmament."}}
 ```
 
-`english` only is sufficient — all other languages (french, german, spanish, russian, polish, braz_por, japanese, korean, simp_chinese) are auto-generated as copies. Per-language keys override English. Supported languages are auto-detected from the game's `localisation/languages.yml`.
+### Inline Localisation
+
+Each line can include a `"loc"` object. English keys at top level, other languages nested:
+
+```jsonl
+{"focus":{"id":"GER_rearm"},"loc":{"GER_rearm":"Rearmament","GER_rearm_desc":"Begin rearmament.","ja":{"GER_rearm":"再軍備","GER_rearm_desc":"再軍備を開始する。"}}}
+```
+
+English-only is sufficient — all other languages (french, german, spanish, russian, polish, braz_por, japanese, korean, simp_chinese) are auto-generated as copies.
 
 ---
 
@@ -311,7 +292,7 @@ Each section is a list of entries. Every entry has a `_file` key that sets the o
 
 All supported languages are auto-detected from the game's `localisation/languages.yml`. If only `english` is provided, all other languages are automatically generated as copies. Per-language overrides are merged on top of English:
 
-```yaml
+```jsonl
 localisation:
   english:
     MY_key: "My Text"
@@ -340,7 +321,7 @@ localisation:
 
 ### Focus tree
 
-```yaml
+```jsonl
 national_focus:
   - _file: my_focuses
     focus_tree:
@@ -374,7 +355,7 @@ desc is auto-set to `{id}_desc` if omitted.
 
 ### Ideas
 
-```yaml
+```jsonl
 ideas:
   - _file: my_ideas
     _category: country        # → ideas: { country: { ... } }
@@ -389,7 +370,7 @@ ideas:
 
 ### Events
 
-```yaml
+```jsonl
 events:
   - _file: my_events
     _namespace: my_mod        # must match event ID prefix
@@ -414,7 +395,7 @@ events:
 
 ### History
 
-```yaml
+```jsonl
 history_countries:
   - _file: GER
     capital: 11650            # province ID (not state ID)
@@ -447,7 +428,7 @@ history_units:
 
 ### Opinion modifiers
 
-```yaml
+```jsonl
 opinion_modifiers:
   - _file: my_opinion_modifiers
     _wrap: opinion_modifiers   # REQUIRED — must wrap in opinion_modifiers = { }
@@ -459,7 +440,7 @@ opinion_modifiers:
 
 ### Characters
 
-```yaml
+```jsonl
 characters:
   - _file: my_characters
     _wrap: characters
@@ -475,7 +456,7 @@ characters:
 
 ### Technologies
 
-```yaml
+```jsonl
 technologies:
   - _file: my_techs
     my_tech:
@@ -494,7 +475,7 @@ technologies:
 
 ### Interface / GFX
 
-```yaml
+```jsonl
 interface:
   - _file: my_interface
     sprites:                  # → spriteTypes: { spriteType: [...] }
@@ -508,7 +489,7 @@ interface:
 
 State names and country names are automatically resolved:
 
-```yaml
+```jsonl
 # States: name → ID
 add_state_building:
   state: berlin       # → resolved to state ID (e.g. 64)
@@ -529,7 +510,7 @@ Use `hoi4yaml --list-states <query>` and `hoi4yaml --list-countries <query>` to 
 
 ## Variables and templates
 
-```yaml
+```jsonl
 vars:
   TAG: GER
   PREFIX: ger_focus
@@ -597,7 +578,7 @@ The following are automatically checked on every run:
 
 ### add_state_building / add_state_manpower
 
-```yaml
+```jsonl
 reward:
   add_state_building:
     state: berlin          # state name or ID
@@ -619,7 +600,7 @@ Expands to:
 
 ### timed_idea
 
-```yaml
+```jsonl
 reward:
   timed_idea:
     idea: my_timed_idea
@@ -630,7 +611,7 @@ Expands to `add_ideas = my_timed_idea` plus an `if` block that only adds the ide
 
 Also supports `state_id` as an alternative to `state` in `add_state_building`/`add_state_manpower`:
 
-```yaml
+```jsonl
 add_state_building:
   state_id: 64       # use state_id if you already know the numeric ID
   type: industrial_complex
@@ -639,7 +620,7 @@ add_state_building:
 
 ### ai_will_do with conditions
 
-```yaml
+```jsonl
 ai_will_do: 1                  # simple: factor 1
 
 ai_will_do:                    # with conditional modifiers
@@ -662,7 +643,7 @@ ai_will_do = {
 
 ### support_companies
 
-```yaml
+```jsonl
 history_units:
   - _file: GER_1936
     division_template:
@@ -681,7 +662,7 @@ Expands to `regiment = { type = infantry column = 0 row = 0 }` ... `support = { 
 
 ### Decisions
 
-```yaml
+```jsonl
 decisions:
   - _file: my_decisions
     my_category:              # decision category key (must match decisions_categories)
@@ -712,7 +693,7 @@ decisions_categories:
 
 ### Unit leaders (field_marshal / corps_commander / navy_leader)
 
-```yaml
+```jsonl
 characters:
   - _file: my_characters
     _wrap: characters
@@ -756,7 +737,7 @@ characters:
 
 ### on_actions
 
-```yaml
+```jsonl
 on_actions:
   - _file: my_on_actions
     on_startup:
@@ -772,7 +753,7 @@ on_actions:
 
 ### scripted_triggers / scripted_effects
 
-```yaml
+```jsonl
 scripted_triggers:
   - _file: my_triggers
     my_is_major_democracy:
@@ -788,7 +769,7 @@ scripted_effects:
 
 Use them in other blocks:
 
-```yaml
+```jsonl
 reward:
   my_boost_industry: yes    # calls the scripted effect
 
@@ -798,7 +779,7 @@ trigger:
 
 ### Complete minimal mod example
 
-```yaml
+```jsonl
 mod:
   name: My First Mod
   version: "1.0"
@@ -899,7 +880,7 @@ localisation:
 
 ### history_states
 
-```yaml
+```jsonl
 history_states:
   - _file: 64_berlin
     state:
@@ -930,7 +911,7 @@ history_states:
 
 ### technologies
 
-```yaml
+```jsonl
 technologies:
   - _file: my_infantry_techs
     my_infantry_1:
@@ -957,7 +938,7 @@ technologies:
 
 ### dynamic_modifiers
 
-```yaml
+```jsonl
 dynamic_modifiers:
   - _file: my_dynamic_modifiers
     my_war_effort:
@@ -974,7 +955,7 @@ dynamic_modifiers:
 
 ### bookmarks (start scenarios)
 
-```yaml
+```jsonl
 bookmarks:
   - _file: my_bookmark
     bookmark:
@@ -992,7 +973,7 @@ bookmarks:
 
 ### autonomy
 
-```yaml
+```jsonl
 autonomy:
   - _file: my_autonomy
     autonomy_free:
@@ -1007,7 +988,7 @@ autonomy:
 
 ### portraits
 
-```yaml
+```jsonl
 portraits:
   - _file: my_portraits
     GER:
@@ -1022,7 +1003,7 @@ portraits:
 
 ### country_colors
 
-```yaml
+```jsonl
 country_colors:
   - _file: my_country_colors
     MY_TAG:
@@ -1032,7 +1013,7 @@ country_colors:
 
 ### _if (conditional entries)
 
-```yaml
+```jsonl
 vars:
   DEBUG: false
 
@@ -1055,7 +1036,7 @@ national_focus:
 
 ### sprites
 
-```yaml
+```jsonl
 interface:
   - _file: my_interface
     sprites:
@@ -1071,7 +1052,7 @@ Expands to `spriteTypes = { spriteType = [ ... ] }`.
 
 `set_tech` works anywhere an effect is valid:
 
-```yaml
+```jsonl
 reward:
   set_tech:
     - infantry_weapons
@@ -1082,7 +1063,7 @@ reward:
 
 If `_namespace` is omitted, it defaults to the value of `_file`:
 
-```yaml
+```jsonl
 events:
   - _file: my_events          # namespace = "my_events" automatically
     country_event:
@@ -1091,7 +1072,7 @@ events:
 
 ### prereq AND vs OR
 
-```yaml
+```jsonl
 prereq: A                     # prerequisite: { focus: A }
 prereq: [A, B]                # prerequisite: { focus: [A, B] }  — both required (AND)
 prereq_or: [A, B]             # prerequisite: { focus: A }
@@ -1104,7 +1085,7 @@ prereq_or: [A, B]             # prerequisite: { focus: A }
 
 ---
 
-```yaml
+```jsonl
 # color is automatically copied to color_ui if color_ui is omitted
 named_colors:
   - _file: my_colors
@@ -1117,15 +1098,15 @@ named_colors:
 ## CLI flags (complete)
 
 ```bash
-hoi4yaml mod.yaml                    # generate
-hoi4yaml mod.yaml --clean            # delete output dir first
-hoi4yaml mod.yaml --check            # validate only, no output
-hoi4yaml mod.yaml --validate         # same as --check
-hoi4yaml mod.yaml --diff             # write changed files only
-hoi4yaml mod.yaml --dry-run          # show what would be written, no output
-hoi4yaml mod.yaml --zip              # generate + zip archive
-hoi4yaml mod.yaml --watch            # watch for file changes, regenerate automatically
-hoi4yaml mod.yaml --output ./dist    # set output directory (default: ./output)
+hoi4yaml mod.jsonl                    # generate
+hoi4yaml mod.jsonl --clean            # delete output dir first
+hoi4yaml mod.jsonl --check            # validate only, no output
+hoi4yaml mod.jsonl --validate         # same as --check
+hoi4yaml mod.jsonl --diff             # write changed files only
+hoi4yaml mod.jsonl --dry-run          # show what would be written, no output
+hoi4yaml mod.jsonl --zip              # generate + zip archive
+hoi4yaml mod.jsonl --watch            # watch for file changes, regenerate automatically
+hoi4yaml mod.jsonl --output ./dist    # set output directory (default: ./output)
 hoi4yaml a.yaml b.yaml               # merge multiple YAML files into one mod
 hoi4yaml --list                      # show all sections, shorthands, validations
 hoi4yaml --list-states japan         # search state IDs by name
@@ -1139,7 +1120,7 @@ hoi4yaml --import path/to/dir        # convert Clausewitz files → YAML
 
 `$VAR` substitution works everywhere in the file, including `_file`, `_namespace`, and all keys/values:
 
-```yaml
+```jsonl
 vars:
   TAG: GER
   PREFIX: ger
@@ -1154,7 +1135,7 @@ national_focus:
 
 ```bash
 hoi4yaml --import path/to/dir        # convert Clausewitz files → YAML
-hoi4yaml --init                      # create mod.yaml scaffold
+hoi4yaml --init                      # create mod.jsonl scaffold
 ```
 
 ### Multiple YAML files
@@ -1173,7 +1154,7 @@ Lists are concatenated, dicts are merged. Useful for organizing large mods.
 
 Load GFX keys, traits, states, ideologies, and localisation keys from other installed mods to avoid false validation warnings:
 
-```yaml
+```jsonl
 mod:
   name: My Mod
   mod_paths:
@@ -1186,7 +1167,7 @@ mod:
 ## Common pitfalls
 
 **opinion_modifiers must be wrapped:**
-```yaml
+```jsonl
 opinion_modifiers:
   - _file: my_file
     _wrap: opinion_modifiers   # without this, HoI4 won't load the file
@@ -1195,7 +1176,7 @@ opinion_modifiers:
 ```
 
 **Multiple blocks of the same key — use a list:**
-```yaml
+```jsonl
 # WRONG — second entry silently overwrites first
 add_opinion_modifier:
   target: ETH
@@ -1213,7 +1194,7 @@ add_opinion_modifier:
 ```
 
 **Event namespace must match ID prefix:**
-```yaml
+```jsonl
 events:
   - _file: my_events
     _namespace: my_mod    # event IDs must start with "my_mod."
@@ -1222,14 +1203,14 @@ events:
 ```
 
 **capital takes province ID, not state ID:**
-```yaml
+```jsonl
 history_countries:
   - _file: GER
     capital: 11650    # province ID (> 1000), NOT state ID
 ```
 
 **add_core_of vs add_core:**
-```yaml
+```jsonl
 add_core_of: GER    # takes TAG
 add_core: 64        # takes state ID
 ```
@@ -1240,7 +1221,7 @@ add_core: 64        # takes state ID
 
 Rename a country's displayed name/flag without changing its TAG:
 
-```yaml
+```jsonl
 cosmetic_tags:
   - _file: my_cosmetic_tags
     GER_GREATER_GERMANY:
@@ -1255,7 +1236,7 @@ localisation:
 ```
 
 Apply in-game:
-```yaml
+```jsonl
 reward:
   set_cosmetic_tag: GER_GREATER_GERMANY
 ```
@@ -1264,7 +1245,7 @@ reward:
 
 ## wargoals
 
-```yaml
+```jsonl
 wargoals:
   - _file: my_wargoals
     my_wargoal:
@@ -1283,7 +1264,7 @@ wargoals:
 ```
 
 Use in effects:
-```yaml
+```jsonl
 reward:
   create_wargoal:
     type: my_wargoal
@@ -1309,7 +1290,7 @@ ideas = {
 ```
 
 Output (`imported.yaml`):
-```yaml
+```jsonl
 ideas:
   - _file: GER_ideas
     ideas:
@@ -1328,7 +1309,7 @@ Note: imported YAML may need manual cleanup (e.g. adding `_category`, `_wrap`, s
 
 Load GFX keys, traits, states, ideologies, and localisation keys from other installed mods to suppress false validation warnings:
 
-```yaml
+```jsonl
 mod:
   name: My Mod
   mod_paths:

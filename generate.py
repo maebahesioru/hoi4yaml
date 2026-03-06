@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""HoI4 Mod Generator - YAML → HoI4 mod files (and back)"""
+"""HoI4 Mod Generator - JSONL/YAML → HoI4 mod files"""
 
 import sys
 import time
 import shutil
 import zipfile
+import json
 import yaml
 from pathlib import Path
 
@@ -252,10 +253,140 @@ SECTIONS = {
 }
 
 
-def load_configs(yaml_files):
+def load_jsonl(path):
+    """Load JSONL file with inline localisation support."""
     merged = {}
-    for f in yaml_files:
-        config = _load_yaml_with_lines(Path(f).read_text(encoding="utf-8"))
+    focus_tree_entry = None
+    ideas_entry = None
+    characters_entry = None
+    events_entry = None
+    decisions_entry = None
+    opinion_modifiers_entry = None
+    loc_merged = {"english": {}, "japanese": {}}
+    
+    for i, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+        line = line.strip()
+        if not line or line.startswith("//"):
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError as e:
+            print(f"{R}[ERROR]{X} {path}:{i}: {e}")
+            continue
+        
+        # Extract inline localisation
+        if "loc" in obj:
+            loc = obj.pop("loc")
+            ja = loc.pop("ja", {})
+            loc_merged["english"].update(loc)
+            loc_merged["japanese"].update(ja)
+        
+        # focus_tree meta
+        if "focus_tree" in obj:
+            ft = obj["focus_tree"]
+            focus_tree_entry = {"_file": ft.pop("_file", None), "focus_tree": {**ft, "focus": []}}
+            merged.setdefault("national_focus", []).append(focus_tree_entry)
+            continue
+        
+        # individual focus
+        if "focus" in obj:
+            if focus_tree_entry:
+                focus_tree_entry["focus_tree"]["focus"].append(obj["focus"])
+            continue
+        
+        # ideas_file meta
+        if "ideas_file" in obj:
+            ideas_entry = {**obj["ideas_file"]}
+            merged.setdefault("ideas", []).append(ideas_entry)
+            continue
+        
+        # individual idea
+        if "idea" in obj:
+            if ideas_entry is not None:
+                ideas_entry.update(obj["idea"])
+            continue
+        
+        # characters_file meta
+        if "characters_file" in obj:
+            characters_entry = {**obj["characters_file"]}
+            merged.setdefault("characters", []).append(characters_entry)
+            continue
+        
+        # individual character
+        if "character" in obj:
+            if characters_entry is not None:
+                characters_entry.update(obj["character"])
+            continue
+        
+        # events_file meta
+        if "events_file" in obj:
+            events_entry = {**obj["events_file"]}
+            merged.setdefault("events", []).append(events_entry)
+            continue
+        
+        # individual event
+        for etype in ["country_event", "news_event", "state_event"]:
+            if etype in obj:
+                if events_entry is not None:
+                    events_entry.setdefault(etype, []).append(obj[etype])
+                break
+        else:
+            # decisions_file meta
+            if "decisions_file" in obj:
+                decisions_entry = {**obj["decisions_file"]}
+                merged.setdefault("decisions", []).append(decisions_entry)
+                continue
+            
+            # individual decision
+            if "decision" in obj:
+                if decisions_entry is not None:
+                    for cat, decs in obj["decision"].items():
+                        decisions_entry.setdefault(cat, {}).update(decs)
+                continue
+            
+            # opinion_modifiers_file meta
+            if "opinion_modifiers_file" in obj:
+                opinion_modifiers_entry = {**obj["opinion_modifiers_file"]}
+                merged.setdefault("opinion_modifiers", []).append(opinion_modifiers_entry)
+                continue
+            
+            # individual opinion_modifier
+            if "opinion_modifier" in obj:
+                if opinion_modifiers_entry is not None:
+                    opinion_modifiers_entry.update(obj["opinion_modifier"])
+                continue
+            
+            # other sections
+            for key, value in obj.items():
+                if key in merged and isinstance(value, list):
+                    merged[key].extend(value)
+                elif key in merged and isinstance(value, dict):
+                    for k2, v2 in value.items():
+                        if k2 in merged[key] and isinstance(v2, dict):
+                            merged[key][k2].update(v2)
+                        else:
+                            merged[key][k2] = v2
+                else:
+                    merged[key] = value
+    
+    # Merge localisation
+    if any(loc_merged[lang] for lang in loc_merged):
+        merged.setdefault("localisation", {})
+        for lang, entries in loc_merged.items():
+            if entries:
+                merged["localisation"].setdefault(lang, {}).update(entries)
+    
+    return merged
+
+
+def load_configs(files):
+    merged = {}
+    for f in files:
+        p = Path(f)
+        if p.suffix == ".jsonl":
+            config = load_jsonl(p)
+        else:
+            config = _load_yaml_with_lines(p.read_text(encoding="utf-8"))
         for key, value in config.items():
             if key in merged and isinstance(value, list):
                 merged[key].extend(value)
@@ -276,11 +407,11 @@ def preprocess(config):
     return apply_conditions(config)
 
 
-def generate(yaml_files, clean=False, dry_run=False, output_dir=Path("output"), do_zip=False, diff_only=False):
+def generate(input_files, clean=False, dry_run=False, output_dir=Path("output"), do_zip=False, diff_only=False):
     _utils._file_count = 0
     _utils._warn_count = 0
 
-    config = preprocess(load_configs(yaml_files))
+    config = preprocess(load_configs(input_files))
     info = config.get("mod", {})
     mod_name = info.get("name", "my_mod").lower().replace(" ", "_")
     mod_dir = output_dir / mod_name

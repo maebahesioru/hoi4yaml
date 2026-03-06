@@ -112,7 +112,8 @@ national_focus:
           prereq: LIB_voice_of_africa
           cost: 10
           reward:
-            add_ideas: LIB_spirit_beacon_freedom
+            add_stability: 0.1
+            add_war_support: 0.05
             add_political_power: 50
 
         # === Political Reform Branch ===
@@ -157,8 +158,8 @@ national_focus:
           prereq: LIB_league_of_nations
           cost: 10
           reward:
-            add_ideas: LIB_spirit_league_member
-            add_political_power: 25
+            add_stability: 0.05
+            add_political_power: 50
 
         - id: LIB_armed_neutrality
           prereq: LIB_league_of_nations
@@ -185,7 +186,9 @@ national_focus:
           prereq: LIB_iron_ore_survey
           cost: 10
           reward:
-            add_ideas: LIB_spirit_iron_industry
+            timed_idea:
+              idea: LIB_spirit_iron_industry
+              days: 365
             add_resource:
               type: steel
               amount: 4
@@ -206,7 +209,7 @@ national_focus:
           cost: 10
           reward:
             country_event: { id: LIB.8 }
-            add_ideas: LIB_spirit_pan_african_congress
+            add_political_power: 75
 
         - id: LIB_liberian_leadership
           prereq: LIB_pan_african_congress
@@ -231,6 +234,334 @@ national_focus:
               type: infantry_equipment_0
               amount: 500
               producer: USA
+
+        # === Deep Economic Branch ===
+        - id: LIB_port_expansion
+          prereq: LIB_modernize_economy
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: naval_base
+              level: 2
+
+        - id: LIB_trade_agreements
+          prereq: LIB_port_expansion
+          cost: 10
+          reward:
+            add_political_power: 100
+            add_stability: 0.05
+
+        - id: LIB_foreign_investment
+          prereq: LIB_trade_agreements
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: industrial_complex
+              level: 2
+            add_political_power: 50
+
+        - id: LIB_rubber_monopoly
+          prereq: LIB_rubber_boom
+          cost: 10
+          reward:
+            add_resource:
+              type: rubber
+              amount: 5
+            add_political_power: 75
+
+        - id: LIB_plantation_expansion
+          prereq: LIB_rubber_monopoly
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: infrastructure
+              level: 2
+            add_political_power: 25
+
+        # === Deep Military Branch ===
+        - id: LIB_officer_academy
+          prereq: LIB_frontier_force
+          cost: 10
+          reward:
+            add_political_power: 50
+            army_experience: 50
+
+        - id: LIB_modern_equipment
+          prereq: LIB_officer_academy
+          cost: 10
+          reward:
+            add_equipment_to_stockpile:
+              type: infantry_equipment_1
+              amount: 300
+              producer: USA
+
+        - id: LIB_jungle_warfare
+          prereq: LIB_frontier_force
+          cost: 10
+          reward:
+            add_war_support: 0.1
+            add_tech_bonus:
+              name: LIB_jungle_bonus
+              bonus: 0.5
+              uses: 1
+              category: land_doctrine
+
+        - id: LIB_fortify_borders
+          prereq: LIB_coastal_defense
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: bunker
+              level: 3
+
+        - id: LIB_national_guard
+          prereq: LIB_fortify_borders
+          cost: 10
+          reward:
+            add_stability: 0.05
+            add_manpower: 5000
+
+        - id: LIB_air_force
+          prereq: LIB_reform_military
+          cost: 10
+          reward:
+            add_equipment_to_stockpile:
+              type: fighter_equipment_0
+              amount: 20
+              producer: USA
+
+        - id: LIB_monrovia_airfield
+          prereq: LIB_air_force
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: air_base
+              level: 3
+
+        # === Deep Pan-African Branch ===
+        - id: LIB_african_volunteers
+          prereq: LIB_african_brotherhood
+          cost: 10
+          reward:
+            add_manpower: 10000
+            add_war_support: 0.05
+
+        - id: LIB_liberation_support
+          prereq: LIB_african_volunteers
+          cost: 10
+          reward:
+            add_political_power: 100
+            add_war_support: 0.1
+
+        - id: LIB_pan_african_army
+          prereq: LIB_liberation_support
+          cost: 10
+          reward:
+            add_war_support: 0.1
+            army_experience: 75
+
+        - id: LIB_free_africa
+          prereq: LIB_pan_african_army
+          cost: 10
+          reward:
+            add_political_power: 150
+            add_stability: 0.1
+            add_war_support: 0.15
+
+        - id: LIB_ethiopian_alliance
+          prereq: LIB_beacon_of_freedom
+          cost: 10
+          reward:
+            add_opinion_modifier:
+              target: ethiopia
+              modifier: LIB_african_solidarity
+            country_event: { id: LIB.10 }
+
+        - id: LIB_defend_ethiopia
+          prereq: LIB_ethiopian_alliance
+          cost: 10
+          reward:
+            add_war_support: 0.15
+            add_stability: 0.1
+
+        # === Deep Political Branch ===
+        - id: LIB_constitution_reform
+          prereq: LIB_true_democracy
+          cost: 10
+          reward:
+            add_stability: 0.1
+            add_political_power: 75
+
+        - id: LIB_universal_suffrage
+          prereq: LIB_constitution_reform
+          cost: 10
+          reward:
+            add_political_power: 50
+            add_stability: 0.05
+
+        - id: LIB_education_reform
+          prereq: LIB_universal_suffrage
+          cost: 10
+          reward:
+            add_political_power: 50
+            add_tech_bonus:
+              name: LIB_education_bonus
+              bonus: 0.5
+              uses: 2
+              category: electronics
+
+        - id: LIB_authoritarian_path
+          prereq: LIB_consolidate_power
+          cost: 10
+          mutually_exclusive: LIB_true_democracy
+          reward:
+            add_ideas: LIB_spirit_authoritarian_rule
+            add_political_power: 150
+
+        - id: LIB_secret_police
+          prereq: LIB_authoritarian_path
+          cost: 10
+          reward:
+            add_political_power: 75
+            add_stability: -0.05
+
+        - id: LIB_one_party_state
+          prereq: LIB_secret_police
+          cost: 10
+          reward:
+            add_political_power: 200
+            add_stability: 0.1
+
+        # === Deep Foreign Policy Branch ===
+        - id: LIB_diplomatic_corps
+          prereq: LIB_appeal_to_league
+          cost: 10
+          reward:
+            add_stability: 0.05
+            add_political_power: 50
+
+        - id: LIB_international_recognition
+          prereq: LIB_diplomatic_corps
+          cost: 10
+          reward:
+            add_stability: 0.1
+            add_political_power: 100
+
+        - id: LIB_neutral_trade
+          prereq: LIB_armed_neutrality
+          cost: 10
+          reward:
+            add_stability: 0.05
+            add_political_power: 75
+
+        - id: LIB_fortress_liberia
+          prereq: LIB_neutral_trade
+          cost: 10
+          reward:
+            add_state_building:
+              - state: Liberia
+                type: bunker
+                level: 2
+              - state: Liberia
+                type: coastal_bunker
+                level: 2
+
+        - id: LIB_swiss_model
+          prereq: LIB_fortress_liberia
+          cost: 10
+          reward:
+            add_stability: 0.1
+            add_war_support: 0.1
+
+        # === Allied Deep Path ===
+        - id: LIB_roberts_field
+          prereq: LIB_lend_lease_request
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: air_base
+              level: 5
+
+        - id: LIB_allied_training
+          prereq: LIB_roberts_field
+          cost: 10
+          reward:
+            add_war_support: 0.1
+            army_experience: 100
+
+        - id: LIB_atlantic_outpost
+          prereq: LIB_allied_training
+          cost: 10
+          reward:
+            add_war_support: 0.1
+            add_political_power: 100
+
+        - id: LIB_war_hero
+          prereq: LIB_atlantic_outpost
+          cost: 10
+          reward:
+            add_stability: 0.15
+            add_war_support: 0.15
+            add_political_power: 150
+
+        # === Iron Ore Deep Path ===
+        - id: LIB_mining_infrastructure
+          prereq: LIB_export_iron
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: infrastructure
+              level: 2
+            add_resource:
+              type: steel
+              amount: 4
+
+        - id: LIB_steel_industry
+          prereq: LIB_mining_infrastructure
+          cost: 10
+          reward:
+            add_state_building:
+              state: Liberia
+              type: industrial_complex
+              level: 2
+            add_political_power: 75
+
+        - id: LIB_industrial_powerhouse
+          prereq: LIB_steel_industry
+          cost: 10
+          reward:
+            add_state_building:
+              - state: Liberia
+                type: industrial_complex
+                level: 2
+              - state: Liberia
+                type: arms_factory
+                level: 1
+            add_political_power: 100
+
+        # === Endgame Focuses ===
+        - id: LIB_regional_power
+          prereq_or: [LIB_liberian_leadership, LIB_war_hero, LIB_industrial_powerhouse]
+          cost: 10
+          reward:
+            add_political_power: 200
+            add_stability: 0.1
+
+        - id: LIB_african_superpower
+          prereq: LIB_regional_power
+          cost: 15
+          reward:
+            add_ideas: LIB_spirit_african_superpower
+            add_political_power: 300
+            add_stability: 0.15
+            add_war_support: 0.15
 
 # ── Ideas / National Spirits ───────────────────────────────
 ideas:
@@ -344,6 +675,23 @@ ideas:
         army_attack_factor: 0.05
         army_defence_factor: 0.05
         war_support_factor: 0.1
+
+    LIB_spirit_authoritarian_rule:
+      cost: 0
+      removal_cost: -1
+      modifier:
+        political_power_gain: 0.25
+        stability_factor: -0.1
+
+    LIB_spirit_african_superpower:
+      cost: 0
+      removal_cost: -1
+      modifier:
+        political_power_gain: 0.25
+        stability_factor: 0.15
+        war_support_factor: 0.15
+        army_attack_factor: 0.1
+        army_defence_factor: 0.1
 
 # ── Characters ─────────────────────────────────────────────
 characters:
@@ -578,6 +926,20 @@ events:
             add_war_support: 0.1
           - name: LIB.9.b
             add_political_power: 50
+            add_stability: 0.05
+
+      - id: LIB.10
+        title: LIB.10.t
+        desc: LIB.10.d
+        picture: GFX_report_event_generic_conference
+        is_triggered_only: yes
+        option:
+          - name: LIB.10.a
+            add_opinion_modifier:
+              target: ethiopia
+              modifier: LIB_african_solidarity
+            add_political_power: 50
+          - name: LIB.10.b
             add_stability: 0.05
 
 # ── Decisions ──────────────────────────────────────────────
@@ -848,6 +1210,144 @@ localisation:
     LIB_diplomatic_mission_usa: "Diplomatic Mission to Washington"
     LIB_diplomatic_mission_usa_desc: "Send a diplomatic mission to Washington to strengthen ties with the United States."
 
+    # Deep Economic Branch
+    LIB_port_expansion: "Port Expansion"
+    LIB_port_expansion_desc: "Expand the port of Monrovia to increase trade capacity."
+    LIB_trade_agreements: "Trade Agreements"
+    LIB_trade_agreements_desc: "Negotiate favorable trade agreements with foreign powers."
+    LIB_foreign_investment: "Foreign Investment"
+    LIB_foreign_investment_desc: "Attract foreign capital to accelerate industrialization."
+    LIB_rubber_monopoly: "Rubber Monopoly"
+    LIB_rubber_monopoly_desc: "Consolidate control over Liberia's rubber production."
+    LIB_plantation_expansion: "Plantation Expansion"
+    LIB_plantation_expansion_desc: "Expand rubber plantations to increase production."
+
+    # Deep Military Branch
+    LIB_officer_academy: "Officer Academy"
+    LIB_officer_academy_desc: "Establish a military academy to train professional officers."
+    LIB_modern_equipment: "Modern Equipment"
+    LIB_modern_equipment_desc: "Acquire modern military equipment from abroad."
+    LIB_jungle_warfare: "Jungle Warfare Doctrine"
+    LIB_jungle_warfare_desc: "Develop tactics suited to Liberia's jungle terrain."
+    LIB_fortify_borders: "Fortify the Borders"
+    LIB_fortify_borders_desc: "Construct defensive fortifications along our borders."
+    LIB_national_guard: "National Guard"
+    LIB_national_guard_desc: "Establish a national guard for territorial defense."
+    LIB_air_force: "Liberian Air Force"
+    LIB_air_force_desc: "Establish an air force to defend Liberian skies."
+    LIB_monrovia_airfield: "Monrovia Airfield"
+    LIB_monrovia_airfield_desc: "Construct a modern airfield near the capital."
+
+    # Deep Pan-African Branch
+    LIB_african_volunteers: "African Volunteers"
+    LIB_african_volunteers_desc: "Recruit volunteers from across Africa who share our vision of freedom."
+    LIB_liberation_support: "Liberation Support"
+    LIB_liberation_support_desc: "Provide support to African liberation movements."
+    LIB_pan_african_army: "Pan-African Army"
+    LIB_pan_african_army_desc: "Form a multinational African army to defend the continent."
+    LIB_free_africa: "Free Africa"
+    LIB_free_africa_desc: "Lead the struggle for African independence."
+    LIB_ethiopian_alliance: "Ethiopian Alliance"
+    LIB_ethiopian_alliance_desc: "Form a defensive alliance with Ethiopia, the other independent African nation."
+    LIB_defend_ethiopia: "Defend Ethiopia"
+    LIB_defend_ethiopia_desc: "Stand ready to defend Ethiopia against foreign aggression."
+
+    # Deep Political Branch
+    LIB_constitution_reform: "Constitutional Reform"
+    LIB_constitution_reform_desc: "Reform the constitution to guarantee democratic rights."
+    LIB_universal_suffrage: "Universal Suffrage"
+    LIB_universal_suffrage_desc: "Extend voting rights to all adult Liberians."
+    LIB_education_reform: "Education Reform"
+    LIB_education_reform_desc: "Invest in education to create an informed citizenry."
+    LIB_authoritarian_path: "Authoritarian Path"
+    LIB_authoritarian_path_desc: "Concentrate power in the executive to drive rapid change."
+    LIB_secret_police: "Secret Police"
+    LIB_secret_police_desc: "Establish a secret police to maintain order."
+    LIB_one_party_state: "One-Party State"
+    LIB_one_party_state_desc: "Eliminate political opposition to ensure stability."
+
+    # Deep Foreign Policy Branch
+    LIB_diplomatic_corps: "Diplomatic Corps"
+    LIB_diplomatic_corps_desc: "Establish a professional diplomatic service."
+    LIB_international_recognition: "International Recognition"
+    LIB_international_recognition_desc: "Gain recognition as a legitimate voice in international affairs."
+    LIB_neutral_trade: "Neutral Trade"
+    LIB_neutral_trade_desc: "Profit from neutrality by trading with all sides."
+    LIB_fortress_liberia: "Fortress Liberia"
+    LIB_fortress_liberia_desc: "Fortify Liberia to deter any potential aggressor."
+    LIB_swiss_model: "The Swiss Model"
+    LIB_swiss_model_desc: "Adopt the Swiss model of armed neutrality."
+
+    # Allied Deep Path
+    LIB_roberts_field: "Roberts Field"
+    LIB_roberts_field_desc: "Construct a major airbase for Allied operations in West Africa."
+    LIB_allied_training: "Allied Training Program"
+    LIB_allied_training_desc: "Send our soldiers for training with Allied forces."
+    LIB_atlantic_outpost: "Atlantic Outpost"
+    LIB_atlantic_outpost_desc: "Liberia becomes a vital Allied outpost in the Atlantic."
+    LIB_war_hero: "War Hero"
+    LIB_war_hero_desc: "Liberia's contribution to the Allied cause earns international respect."
+
+    # Iron Ore Deep Path
+    LIB_mining_infrastructure: "Mining Infrastructure"
+    LIB_mining_infrastructure_desc: "Build railways and roads to support the mining industry."
+    LIB_steel_industry: "Steel Industry"
+    LIB_steel_industry_desc: "Process iron ore domestically to create a steel industry."
+    LIB_industrial_powerhouse: "Industrial Powerhouse"
+    LIB_industrial_powerhouse_desc: "Liberia emerges as an industrial power in West Africa."
+
+    # Endgame
+    LIB_regional_power: "Regional Power"
+    LIB_regional_power_desc: "Liberia has become the dominant power in West Africa."
+    LIB_african_superpower: "African Superpower"
+    LIB_african_superpower_desc: "Liberia stands as the undisputed leader of Africa, a beacon of hope for all African peoples."
+
+    # New National Spirits
+    LIB_spirit_trade_hub: "Trade Hub"
+    LIB_spirit_trade_hub_desc: "Monrovia has become a major trading center in West Africa."
+    LIB_spirit_rubber_monopoly: "Rubber Monopoly"
+    LIB_spirit_rubber_monopoly_desc: "Liberia controls a significant portion of the world's rubber supply."
+    LIB_spirit_officer_academy: "Officer Academy"
+    LIB_spirit_officer_academy_desc: "A professional officer corps leads the Liberian military."
+    LIB_spirit_jungle_fighters: "Jungle Fighters"
+    LIB_spirit_jungle_fighters_desc: "Liberian soldiers are experts in jungle warfare."
+    LIB_spirit_national_guard: "National Guard"
+    LIB_spirit_national_guard_desc: "A citizen militia stands ready to defend the homeland."
+    LIB_spirit_african_volunteers: "African Volunteers"
+    LIB_spirit_african_volunteers_desc: "Volunteers from across Africa have joined the Liberian cause."
+    LIB_spirit_pan_african_army: "Pan-African Army"
+    LIB_spirit_pan_african_army_desc: "A multinational African army fights for continental freedom."
+    LIB_spirit_defender_of_africa: "Defender of Africa"
+    LIB_spirit_defender_of_africa_desc: "Liberia stands as the defender of African independence."
+    LIB_spirit_universal_suffrage: "Universal Suffrage"
+    LIB_spirit_universal_suffrage_desc: "All adult Liberians have the right to vote."
+    LIB_spirit_educated_populace: "Educated Populace"
+    LIB_spirit_educated_populace_desc: "Investment in education has created an informed citizenry."
+    LIB_spirit_authoritarian_rule: "Authoritarian Rule"
+    LIB_spirit_authoritarian_rule_desc: "Strong executive authority enables rapid decision-making."
+    LIB_spirit_secret_police: "Secret Police"
+    LIB_spirit_secret_police_desc: "The secret police maintains order through surveillance and intimidation."
+    LIB_spirit_diplomatic_corps: "Diplomatic Corps"
+    LIB_spirit_diplomatic_corps_desc: "A professional diplomatic service represents Liberian interests abroad."
+    LIB_spirit_neutral_trade: "Neutral Trade"
+    LIB_spirit_neutral_trade_desc: "Liberia profits from trading with all sides in the conflict."
+    LIB_spirit_armed_nation: "Armed Nation"
+    LIB_spirit_armed_nation_desc: "Every Liberian citizen is prepared to defend the nation."
+    LIB_spirit_allied_training: "Allied Training"
+    LIB_spirit_allied_training_desc: "Allied training has modernized the Liberian military."
+    LIB_spirit_atlantic_outpost: "Atlantic Outpost"
+    LIB_spirit_atlantic_outpost_desc: "Liberia serves as a vital Allied outpost in the Atlantic."
+    LIB_spirit_steel_industry: "Steel Industry"
+    LIB_spirit_steel_industry_desc: "A domestic steel industry fuels Liberian industrialization."
+    LIB_spirit_african_superpower: "African Superpower"
+    LIB_spirit_african_superpower_desc: "Liberia has risen to become the dominant power on the African continent."
+
+    # New Event
+    LIB.10.t: "Ethiopian Alliance"
+    LIB.10.d: "Ethiopia has agreed to a defensive alliance with Liberia. Together, the two independent African nations will stand against foreign aggression."
+    LIB.10.a: "Together we are stronger."
+    LIB.10.b: "We will observe for now."
+
     # Events
     LIB.1.t: "The Firestone Question"
     LIB.1.d: "The Firestone Rubber Company's concession has long been a source of controversy. Some argue it is economic exploitation; others see it as vital investment. The time has come to decide our stance."
@@ -1027,3 +1527,141 @@ localisation:
     LIB_train_officers_desc: "有望な将校を高度な軍事訓練のために海外に派遣する。"
     LIB_diplomatic_mission_usa: "ワシントンへの外交使節"
     LIB_diplomatic_mission_usa_desc: "米国との関係を強化するためにワシントンに外交使節を派遣する。"
+
+    # 経済深化ブランチ
+    LIB_port_expansion: "港湾拡張"
+    LIB_port_expansion_desc: "貿易能力を高めるためにモンロビア港を拡張する。"
+    LIB_trade_agreements: "貿易協定"
+    LIB_trade_agreements_desc: "外国との有利な貿易協定を交渉する。"
+    LIB_foreign_investment: "外国投資"
+    LIB_foreign_investment_desc: "工業化を加速するために外国資本を誘致する。"
+    LIB_rubber_monopoly: "ゴム独占"
+    LIB_rubber_monopoly_desc: "リベリアのゴム生産の支配を強化する。"
+    LIB_plantation_expansion: "農園拡大"
+    LIB_plantation_expansion_desc: "生産量を増やすためにゴム農園を拡大する。"
+
+    # 軍事深化ブランチ
+    LIB_officer_academy: "士官学校"
+    LIB_officer_academy_desc: "職業軍人を育成するための士官学校を設立する。"
+    LIB_modern_equipment: "近代装備"
+    LIB_modern_equipment_desc: "海外から近代的な軍事装備を調達する。"
+    LIB_jungle_warfare: "ジャングル戦ドクトリン"
+    LIB_jungle_warfare_desc: "リベリアのジャングル地形に適した戦術を開発する。"
+    LIB_fortify_borders: "国境要塞化"
+    LIB_fortify_borders_desc: "国境沿いに防御施設を建設する。"
+    LIB_national_guard: "国家警備隊"
+    LIB_national_guard_desc: "領土防衛のための国家警備隊を設立する。"
+    LIB_air_force: "リベリア空軍"
+    LIB_air_force_desc: "リベリアの空を守るための空軍を設立する。"
+    LIB_monrovia_airfield: "モンロビア飛行場"
+    LIB_monrovia_airfield_desc: "首都近郊に近代的な飛行場を建設する。"
+
+    # 汎アフリカ深化ブランチ
+    LIB_african_volunteers: "アフリカ義勇兵"
+    LIB_african_volunteers_desc: "自由のビジョンを共有するアフリカ各地から義勇兵を募集する。"
+    LIB_liberation_support: "解放運動支援"
+    LIB_liberation_support_desc: "アフリカの解放運動を支援する。"
+    LIB_pan_african_army: "汎アフリカ軍"
+    LIB_pan_african_army_desc: "大陸を守るための多国籍アフリカ軍を編成する。"
+    LIB_free_africa: "アフリカ解放"
+    LIB_free_africa_desc: "アフリカ独立闘争を主導する。"
+    LIB_ethiopian_alliance: "エチオピア同盟"
+    LIB_ethiopian_alliance_desc: "もう一つの独立アフリカ国家エチオピアと防衛同盟を結ぶ。"
+    LIB_defend_ethiopia: "エチオピア防衛"
+    LIB_defend_ethiopia_desc: "外国の侵略からエチオピアを守る準備を整える。"
+
+    # 政治深化ブランチ
+    LIB_constitution_reform: "憲法改革"
+    LIB_constitution_reform_desc: "民主的権利を保障するために憲法を改革する。"
+    LIB_universal_suffrage: "普通選挙"
+    LIB_universal_suffrage_desc: "全成人リベリア人に選挙権を拡大する。"
+    LIB_education_reform: "教育改革"
+    LIB_education_reform_desc: "情報に通じた市民を育成するために教育に投資する。"
+    LIB_authoritarian_path: "権威主義の道"
+    LIB_authoritarian_path_desc: "急速な変革を推進するために行政権を集中させる。"
+    LIB_secret_police: "秘密警察"
+    LIB_secret_police_desc: "秩序を維持するための秘密警察を設立する。"
+    LIB_one_party_state: "一党独裁"
+    LIB_one_party_state_desc: "安定を確保するために政治的反対派を排除する。"
+
+    # 外交深化ブランチ
+    LIB_diplomatic_corps: "外交団"
+    LIB_diplomatic_corps_desc: "専門的な外交サービスを確立する。"
+    LIB_international_recognition: "国際的承認"
+    LIB_international_recognition_desc: "国際問題における正当な発言者として認められる。"
+    LIB_neutral_trade: "中立貿易"
+    LIB_neutral_trade_desc: "全陣営との貿易により中立から利益を得る。"
+    LIB_fortress_liberia: "要塞リベリア"
+    LIB_fortress_liberia_desc: "潜在的な侵略者を抑止するためにリベリアを要塞化する。"
+    LIB_swiss_model: "スイスモデル"
+    LIB_swiss_model_desc: "武装中立のスイスモデルを採用する。"
+
+    # 連合国深化パス
+    LIB_roberts_field: "ロバーツ飛行場"
+    LIB_roberts_field_desc: "西アフリカでの連合国作戦のための主要航空基地を建設する。"
+    LIB_allied_training: "連合国訓練プログラム"
+    LIB_allied_training_desc: "兵士を連合国軍との訓練に派遣する。"
+    LIB_atlantic_outpost: "大西洋の前哨基地"
+    LIB_atlantic_outpost_desc: "リベリアは大西洋における重要な連合国前哨基地となる。"
+    LIB_war_hero: "戦争の英雄"
+    LIB_war_hero_desc: "連合国の大義へのリベリアの貢献が国際的な尊敬を得る。"
+
+    # 鉄鉱石深化パス
+    LIB_mining_infrastructure: "採掘インフラ"
+    LIB_mining_infrastructure_desc: "鉱業を支援するための鉄道と道路を建設する。"
+    LIB_steel_industry: "鉄鋼産業"
+    LIB_steel_industry_desc: "鉄鉱石を国内で加工して鉄鋼産業を創出する。"
+    LIB_industrial_powerhouse: "産業大国"
+    LIB_industrial_powerhouse_desc: "リベリアは西アフリカの産業大国として台頭する。"
+
+    # 終盤
+    LIB_regional_power: "地域大国"
+    LIB_regional_power_desc: "リベリアは西アフリカの支配的な大国となった。"
+    LIB_african_superpower: "アフリカ超大国"
+    LIB_african_superpower_desc: "リベリアはアフリカの揺るぎないリーダーとして立ち、全アフリカ人の希望の灯台となった。"
+
+    # 新国家精神
+    LIB_spirit_trade_hub: "貿易拠点"
+    LIB_spirit_trade_hub_desc: "モンロビアは西アフリカの主要な貿易センターとなった。"
+    LIB_spirit_rubber_monopoly: "ゴム独占"
+    LIB_spirit_rubber_monopoly_desc: "リベリアは世界のゴム供給の相当部分を支配している。"
+    LIB_spirit_officer_academy: "士官学校"
+    LIB_spirit_officer_academy_desc: "職業将校団がリベリア軍を率いている。"
+    LIB_spirit_jungle_fighters: "ジャングル戦士"
+    LIB_spirit_jungle_fighters_desc: "リベリア兵士はジャングル戦の専門家だ。"
+    LIB_spirit_national_guard: "国家警備隊"
+    LIB_spirit_national_guard_desc: "市民民兵が祖国防衛の準備を整えている。"
+    LIB_spirit_african_volunteers: "アフリカ義勇兵"
+    LIB_spirit_african_volunteers_desc: "アフリカ各地からの義勇兵がリベリアの大義に加わった。"
+    LIB_spirit_pan_african_army: "汎アフリカ軍"
+    LIB_spirit_pan_african_army_desc: "多国籍アフリカ軍が大陸の自由のために戦う。"
+    LIB_spirit_defender_of_africa: "アフリカの守護者"
+    LIB_spirit_defender_of_africa_desc: "リベリアはアフリカ独立の守護者として立つ。"
+    LIB_spirit_universal_suffrage: "普通選挙"
+    LIB_spirit_universal_suffrage_desc: "全成人リベリア人が選挙権を持つ。"
+    LIB_spirit_educated_populace: "教育された国民"
+    LIB_spirit_educated_populace_desc: "教育への投資が情報に通じた市民を生み出した。"
+    LIB_spirit_authoritarian_rule: "権威主義的統治"
+    LIB_spirit_authoritarian_rule_desc: "強力な行政権が迅速な意思決定を可能にする。"
+    LIB_spirit_secret_police: "秘密警察"
+    LIB_spirit_secret_police_desc: "秘密警察が監視と威嚇を通じて秩序を維持する。"
+    LIB_spirit_diplomatic_corps: "外交団"
+    LIB_spirit_diplomatic_corps_desc: "専門的な外交サービスが海外でリベリアの利益を代表する。"
+    LIB_spirit_neutral_trade: "中立貿易"
+    LIB_spirit_neutral_trade_desc: "リベリアは紛争の全陣営との貿易から利益を得ている。"
+    LIB_spirit_armed_nation: "武装国家"
+    LIB_spirit_armed_nation_desc: "全リベリア市民が国家防衛の準備を整えている。"
+    LIB_spirit_allied_training: "連合国訓練"
+    LIB_spirit_allied_training_desc: "連合国の訓練がリベリア軍を近代化した。"
+    LIB_spirit_atlantic_outpost: "大西洋の前哨基地"
+    LIB_spirit_atlantic_outpost_desc: "リベリアは大西洋における重要な連合国前哨基地として機能している。"
+    LIB_spirit_steel_industry: "鉄鋼産業"
+    LIB_spirit_steel_industry_desc: "国内鉄鋼産業がリベリアの工業化を支えている。"
+    LIB_spirit_african_superpower: "アフリカ超大国"
+    LIB_spirit_african_superpower_desc: "リベリアはアフリカ大陸の支配的な大国として台頭した。"
+
+    # 新イベント
+    LIB.10.t: "エチオピア同盟"
+    LIB.10.d: "エチオピアがリベリアとの防衛同盟に同意した。二つの独立アフリカ国家は共に外国の侵略に立ち向かう。"
+    LIB.10.a: "共に我々はより強い。"
+    LIB.10.b: "今は様子を見よう。"
