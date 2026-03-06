@@ -4,6 +4,22 @@ from .shorthands import expand_shorthands, expand_events
 from .gamedata import resolve_game_refs
 
 
+def _auto_picture(ideas_dict):
+    """Auto-set picture = GFX_idea_{id} for ideas missing picture."""
+    for k, v in ideas_dict.items():
+        if isinstance(v, dict) and "picture" not in v:
+            v["picture"] = f"GFX_idea_{k}"
+    return ideas_dict
+
+
+def _auto_icon(decisions_dict):
+    """Auto-set icon = generic_political_discourse for decisions missing icon."""
+    for k, v in decisions_dict.items():
+        if isinstance(v, dict) and "icon" not in v:
+            v["icon"] = "generic_political_discourse"
+    return decisions_dict
+
+
 def gen_section(mod_dir, entries, subdir, ext="txt", **kw):
     if subdir == "events":
         entries = expand_events(entries)
@@ -16,14 +32,24 @@ def gen_section(mod_dir, entries, subdir, ext="txt", **kw):
             parts.append(f"add_namespace = {namespace}\n")
         if "_category" in entry:
             cat = entry["_category"]
-            raw = {k: v for k, v in entry.items() if not k.startswith("_")}
+            raw = _auto_picture({k: v for k, v in entry.items() if not k.startswith("_")})
             data = expand_shorthands(resolve_game_refs({"ideas": {cat: raw}}))
         elif "_wrap" in entry:
             wrap = entry["_wrap"]
             raw = {k: v for k, v in entry.items() if not k.startswith("_")}
             data = expand_shorthands(resolve_game_refs({wrap: raw}))
         else:
-            data = expand_shorthands(resolve_game_refs({k: v for k, v in entry.items() if not k.startswith("_")}))
+            raw = {k: v for k, v in entry.items() if not k.startswith("_")}
+            # auto-set picture for ideas, icon for decisions
+            if subdir.startswith("common/ideas"):
+                for cat_val in raw.values():
+                    if isinstance(cat_val, dict):
+                        _auto_picture(cat_val)
+            if subdir.startswith("common/decisions") and not subdir.endswith("categories"):
+                for cat_val in raw.values():
+                    if isinstance(cat_val, dict):
+                        _auto_icon(cat_val)
+            data = expand_shorthands(resolve_game_refs(raw))
         if data:
             parts.append(to_clausewitz(data))
         write(mod_dir / subdir / f"{filename}.{ext}", "\n".join(parts) + "\n", **kw)
