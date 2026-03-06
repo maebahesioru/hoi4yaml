@@ -519,3 +519,9 @@ def validate(config):
         for k, v in entry.items():
             if not k.startswith("_") and isinstance(v, dict):
                 _check_loc(k, "scripted_diplomatic_action")
+
+    # peace_conference: option name
+    for entry in config.get("peace_conference", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "peace_conference")
