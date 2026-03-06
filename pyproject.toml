@@ -13,3 +13,4 @@ hoi4yaml = "generate:main"
 
 [tool.setuptools]
 py-modules = ["generate"]
+packages = ["src"]
