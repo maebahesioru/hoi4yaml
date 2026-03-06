@@ -396,7 +396,16 @@ reward:
     days: 180
 ```
 
-Note: `days_remove` must also be set on the idea definition itself.
+Expands to `add_ideas = my_timed_idea` plus an `if` block that only adds the idea if not already present. The `days` value is informational only — `days_remove` must also be set on the idea definition itself.
+
+Also supports `state_id` as an alternative to `state` in `add_state_building`/`add_state_manpower`:
+
+```yaml
+add_state_building:
+  state_id: 64       # use state_id if you already know the numeric ID
+  type: industrial_complex
+  level: 3
+```
 
 ### ai_will_do with conditions
 
@@ -429,13 +438,16 @@ history_units:
     division_template:
       - name: "Infantry Division"
         regiments:
-          - infantry: 9
+          - infantry: 9      # value = number of battalions of that type
+          - artillery_brigade: 1
         support_companies:
           - engineer: 1
           - recon: 1
 ```
 
-Expands to `support = { type = engineer column = 0 row = 0 }` etc.
+`regiments` value is the **count** of battalions. `infantry: 9` creates 9 infantry battalions, auto-assigned to column/row (5 per row). `support_companies` value is always 1 (one company per slot).
+
+Expands to `regiment = { type = infantry column = 0 row = 0 }` ... `support = { type = engineer column = 0 row = 0 }` etc.
 
 ### sprites
 
