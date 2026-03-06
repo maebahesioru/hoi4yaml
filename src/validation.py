@@ -219,6 +219,13 @@ def validate(config):
                     elif k == "modifier" and isinstance(v, dict) and ctx in EFFECT_CTX_KEYS:
                         warn(f"'modifier' block in effect context ('{ctx}') does nothing — use 'add_modifier' or 'add_ideas' instead", line=_line)
                         _check_recursive(v, new_ctx)
+                    elif k in ("target", "add_core_of", "remove_core_of", "owner", "controller",
+                               "tag", "original_tag", "default_country", "white_peace") and \
+                            isinstance(v, str) and re.match(r'^[A-Z]{2,3}$', v) and \
+                            _gd._country_map is not None and _gd._country_map and \
+                            v not in _gd._country_map.values():
+                        close = difflib.get_close_matches(v, _gd._country_map.values(), n=3, cutoff=0.6)
+                        warn(f"Unknown country TAG: '{v}'" + (f" — did you mean: {close}?" if close else ""), line=_line)
                     elif k == "add_core_of" and isinstance(v, (int, float)):
                         warn(f"'add_core_of' takes a country TAG (e.g. GER), not a number — did you mean 'add_core = {v}'?", line=_line)
                     elif k == "add_core" and isinstance(v, str) and re.match(r'^[A-Z]{2,3}$', v):

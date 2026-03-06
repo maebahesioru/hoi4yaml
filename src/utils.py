@@ -14,10 +14,11 @@ def write(path, content, dry_run=False, diff_only=False):
     if dry_run:
         print(f"  {B}[dry-run]{X} {path}"); return
     full_content = HEADER + content
-    if diff_only and path.exists() and path.read_text(encoding="utf-8-sig") == full_content:
+    if diff_only and path.exists() and path.read_text(encoding="utf-8") == full_content:
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(full_content, encoding="utf-8-sig")
+    enc = "utf-8-sig" if path.suffix == ".yml" else "utf-8"
+    path.write_text(full_content, encoding=enc)
     _file_count += 1
     print(f"  {G}+{X} {path}")
 

@@ -35,6 +35,8 @@ def expand_shorthands(data):
     out = {}
     if "id" in data and "icon" not in data and ("x" in data or "y" in data or "rel_pos" in data):
         out["icon"] = guess_icon(str(data["id"]))
+    if "id" in data and "desc" not in data and ("x" in data or "y" in data or "rel_pos" in data):
+        out["desc"] = f"{data['id']}_desc"
     for k, v in data.items():
         if k == "focus" and isinstance(v, list) and v and isinstance(v[0], dict) and "id" in v[0]:
             v = auto_layout_focuses([dict(f) for f in v])

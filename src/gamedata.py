@@ -303,7 +303,7 @@ def resolve_game_refs(data):
             try: out[k] = resolve_state(v)
             except ValueError as e: warn(str(e)); out[k] = v
         elif k in ("owner", "controller", "tag", "add_core_of", "remove_core_of",
-                   "original_tag", "default_country") and isinstance(v, str) and not re.match(r'^[A-Z]{3}$', v):
+                   "original_tag", "default_country", "target") and isinstance(v, str) and not re.match(r'^[A-Z]{3}$', v):
             try: out[k] = resolve_tag(v)
             except ValueError as e: warn(str(e)); out[k] = v
         else:
