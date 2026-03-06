@@ -45,7 +45,7 @@ def _get_all_langs():
 
 def gen_localisation(mod_dir, loc, **kw):
     if loc and isinstance(next(iter(loc.values())), dict):
-        english = loc.get("english", {})
+        english = loc.get("english") or next(iter(loc.values()), {})
         # auto-fill all languages not explicitly specified
         langs = {lang: loc.get(lang, {}) for lang in _get_all_langs()}
         for lang, entries in langs.items():
