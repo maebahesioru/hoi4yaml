@@ -155,7 +155,13 @@ SECTIONS = {
     "gfx_particles":         ("gfx/particles",                     "asset"),
     "gfx_models":            ("gfx/models",                        "asset"),
     "music":                 ("music",                              "asset"),
-    "sound":                 ("sound",                              "asset"),
+    "music_hoi2":            ("music/hoi2",                        "asset"),
+    "music_hoi3":            ("music/hoi3",                        "asset"),
+    "sound":                 ("sound",                             "asset"),
+    "sound_gui":             ("sound/gui",                         "asset"),
+    "sound_animations":      ("sound/animations",                  "asset"),
+    "sound_menu":            ("sound/menu",                        "asset"),
+    "sound_weather":         ("sound/weather",                     "asset"),
 }
 
 
