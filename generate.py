@@ -35,6 +35,7 @@ SECTIONS = {
     "scripted_effects":      ("common/scripted_effects",            "txt"),
     "scripted_localisation": ("common/scripted_localisation",       "txt"),
     "scripted_gui":          ("common/scripted_gui",                "txt"),
+    "scripted_variables":    ("common/scripted_variables",          "txt"),
     "opinion_modifiers":     ("common/opinion_modifiers",           "txt"),
     "dynamic_modifiers":     ("common/dynamic_modifiers",           "txt"),
     "modifiers":             ("common/modifiers",                   "txt"),
@@ -65,11 +66,14 @@ SECTIONS = {
     "special_projects":      ("common/special_projects",            "txt"),
     "timed_activities":      ("common/timed_activities",            "txt"),
     "scripted_diplomatic_actions": ("common/scripted_diplomatic_actions", "txt"),
+    "defines":               ("common/defines",                     "lua"),
     "history_countries":     ("history/countries",                  "txt"),
     "history_states":        ("history/states",                     "txt"),
     "history_units":         ("history/units",                      "txt"),
+    "history_provinces":     ("history/provinces",                  "txt"),
     "interface":             ("interface",                          "gfx"),
     "music":                 ("music",                              "asset"),
+    "sound":                 ("sound",                              "asset"),
 }
 
 
