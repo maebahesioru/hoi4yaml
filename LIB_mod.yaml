@@ -137,6 +137,81 @@ national_focus:
             add_ideas: LIB_spirit_beacon_freedom
             add_political_power: 50
 
+        # === Political Reform Branch ===
+        - id: LIB_political_reform
+          x: 4
+          y: 1
+          prereq: LIB_lone_star
+          cost: 10
+          reward:
+            country_event: { id: LIB.3 }
+
+        - id: LIB_unification_policy
+          x: 3
+          y: 2
+          prereq: LIB_political_reform
+          cost: 10
+          reward:
+            remove_ideas: LIB_spirit_americo_liberian_elite
+            add_ideas: LIB_spirit_national_unity
+            add_stability: 0.05
+
+        - id: LIB_consolidate_power
+          x: 5
+          y: 2
+          prereq: LIB_political_reform
+          cost: 10
+          reward:
+            add_ideas: LIB_spirit_strong_executive
+            add_political_power: 100
+
+        - id: LIB_true_democracy
+          x: 3
+          y: 3
+          prereq: LIB_unification_policy
+          cost: 10
+          reward:
+            add_stability: 0.1
+            add_war_support: 0.05
+            add_ideas: LIB_spirit_peoples_republic
+
+        # === Foreign Policy Branch ===
+        - id: LIB_league_of_nations
+          x: 8
+          y: 1
+          prereq: LIB_lone_star
+          cost: 10
+          reward:
+            add_political_power: 50
+            country_event: { id: LIB.5 }
+
+        - id: LIB_appeal_to_league
+          x: 7
+          y: 2
+          prereq: LIB_league_of_nations
+          cost: 10
+          reward:
+            add_ideas: LIB_spirit_league_member
+            add_political_power: 25
+
+        - id: LIB_armed_neutrality
+          x: 9
+          y: 2
+          prereq: LIB_league_of_nations
+          cost: 10
+          reward:
+            add_ideas: LIB_spirit_armed_neutrality
+            add_war_support: 0.1
+
+        - id: LIB_west_african_solidarity
+          x: 8
+          y: 3
+          prereq_or: [LIB_appeal_to_league, LIB_armed_neutrality]
+          cost: 10
+          reward:
+            country_event: { id: LIB.6 }
+            add_political_power: 50
+
 # ── Ideas / National Spirits ───────────────────────────────
 ideas:
   - _file: LIB_ideas
@@ -197,6 +272,49 @@ ideas:
         stability_factor: 0.1
         war_support_factor: 0.05
 
+    LIB_spirit_national_unity:
+      picture: generic_pp_unity_bonus
+      cost: 0
+      removal_cost: -1
+      modifier:
+        stability_factor: 0.1
+        political_power_gain: 0.05
+        conscription: 0.01
+
+    LIB_spirit_strong_executive:
+      picture: generic_fascism_drift_bonus
+      cost: 0
+      removal_cost: -1
+      modifier:
+        political_power_gain: 0.2
+        stability_factor: -0.05
+
+    LIB_spirit_peoples_republic:
+      picture: generic_democratic_drift_bonus
+      cost: 0
+      removal_cost: -1
+      modifier:
+        stability_factor: 0.15
+        war_support_factor: 0.1
+        conscription: 0.02
+
+    LIB_spirit_league_member:
+      picture: generic_foreign_capital
+      cost: 0
+      removal_cost: -1
+      modifier:
+        political_power_gain: 0.1
+        stability_factor: 0.05
+
+    LIB_spirit_armed_neutrality:
+      picture: generic_army_bonus
+      cost: 0
+      removal_cost: -1
+      modifier:
+        war_support_factor: 0.1
+        army_defence_factor: 0.05
+        army_attack_factor: -0.05
+
 # ── Characters ─────────────────────────────────────────────
 characters:
   - _file: LIB_characters
@@ -221,6 +339,34 @@ characters:
         ideology: democratic
         traits: [moderate_reformist]
         desc: LIB_william_tubman_desc
+
+    LIB_daniel_howard:
+      name: "Daniel Howard"
+      portraits:
+        army:
+          large: GFX_portrait_LIB_daniel_howard
+      field_marshal:
+        traits: [old_guard, defensive_doctrine]
+        skill: 1
+        attack_skill: 1
+        defense_skill: 2
+        planning_skill: 1
+        logistics_skill: 1
+        desc: LIB_daniel_howard_desc
+
+    LIB_elwood_davis:
+      name: "Elwood Davis"
+      portraits:
+        army:
+          large: GFX_portrait_LIB_elwood_davis
+      corps_commander:
+        traits: [infantry_officer]
+        skill: 1
+        attack_skill: 1
+        defense_skill: 1
+        planning_skill: 2
+        logistics_skill: 1
+        desc: LIB_elwood_davis_desc
 
 # ── Events ─────────────────────────────────────────────────
 events:
@@ -264,6 +410,121 @@ events:
             add_stability: 0.05
           - name: LIB.2.b
             add_political_power: 25
+
+      - id: LIB.3
+        title: LIB.3.t
+        desc: LIB.3.d
+        picture: GFX_report_event_generic_parliament
+        is_triggered_only: yes
+        option:
+          - name: LIB.3.a
+            # Reform path
+            hidden:
+              set_country_flag: LIB_reform_path
+            add_stability: 0.05
+          - name: LIB.3.b
+            # Consolidation path
+            hidden:
+              set_country_flag: LIB_consolidation_path
+            add_political_power: 50
+
+      - id: LIB.4
+        title: LIB.4.t
+        desc: LIB.4.d
+        picture: GFX_report_event_generic_factory
+        mean_time_to_happen:
+          months: 24
+        trigger:
+          tag: LIB
+          has_idea: LIB_spirit_modernization
+          "date > 1938.1.1": yes
+        option:
+          - name: LIB.4.a
+            add_state_building:
+              state: Liberia
+              type: industrial_complex
+              level: 1
+          - name: LIB.4.b
+            add_state_building:
+              state: Liberia
+              type: infrastructure
+              level: 1
+            add_political_power: 25
+
+      - id: LIB.5
+        title: LIB.5.t
+        desc: LIB.5.d
+        picture: GFX_report_event_generic_sign_treaty1
+        is_triggered_only: yes
+        option:
+          - name: LIB.5.a
+            add_political_power: 50
+            add_stability: 0.05
+          - name: LIB.5.b
+            add_war_support: 0.1
+            add_political_power: 25
+
+      - id: LIB.6
+        title: LIB.6.t
+        desc: LIB.6.d
+        picture: GFX_report_event_generic_conference
+        is_triggered_only: yes
+        option:
+          - name: LIB.6.a
+            add_opinion_modifier:
+              - target: ethiopia
+                modifier: LIB_african_solidarity
+              - target: SAF
+                modifier: LIB_african_solidarity
+            add_political_power: 50
+          - name: LIB.6.b
+            add_stability: 0.05
+
+# ── Decisions ──────────────────────────────────────────────
+decisions:
+  - _file: LIB_decisions
+    LIB_decisions:
+      LIB_recruit_indigenous_soldiers:
+        icon: generic_army_support
+        cost: 50
+        days_remove: 60
+        available:
+          tag: LIB
+          has_manpower: 1000
+        modifier:
+          conscription: 0.01
+        complete_effect:
+          army_experience: 10
+          add_manpower: -1000
+
+      LIB_rubber_export_deal:
+        icon: generic_industry
+        cost: 75
+        days_remove: 90
+        available:
+          tag: LIB
+          has_idea: LIB_spirit_firestone_concession
+        modifier:
+          consumer_goods_factor: -0.05
+        complete_effect:
+          add_political_power: 50
+          add_opinion_modifier:
+            target: USA
+            modifier: LIB_american_friendship
+
+      LIB_build_monrovia_port:
+        icon: generic_naval
+        cost: 100
+        days_remove: 120
+        available:
+          tag: LIB
+          has_political_power: 100
+        complete_effect:
+          add_state_building:
+            state: Liberia
+            type: naval_base
+            level: 1
+          add_political_power: -50
 
 # ── Opinion Modifiers ──────────────────────────────────────
 opinion_modifiers:
@@ -339,9 +600,76 @@ localisation:
     LIB_spirit_beacon_freedom: "Beacon of Freedom"
     LIB_spirit_beacon_freedom_desc: "Liberia's founding ideals of liberty inspire both its citizens and oppressed peoples worldwide."
 
+    # Opinion modifiers
+    LIB_american_friendship: "American Friendship"
+    LIB_african_solidarity: "African Solidarity"
+    LIB_nationalization_anger: "Nationalization Anger"
+
     # Characters
+    LIB_edwin_barclay: "Edwin Barclay"
+    LIB_william_tubman: "William Tubman"
+    LIB_daniel_howard: "Daniel Howard"
+    LIB_elwood_davis: "Elwood Davis"
     LIB_edwin_barclay_desc: "Edwin Barclay has served as President of Liberia since 1930. A cautious statesman, he navigates the pressures of foreign interests while maintaining Liberian sovereignty."
     LIB_william_tubman_desc: "William Tubman is a rising political figure who advocates for the unification of Americo-Liberians and indigenous Liberians under a single national identity."
+    LIB_daniel_howard_desc: "General Daniel Howard is the commander of the Liberian Frontier Force, a veteran officer who has spent his career defending Liberia's borders."
+    LIB_elwood_davis_desc: "Colonel Elwood Davis is a capable infantry officer who has modernized training methods within the Liberian Frontier Force."
+
+    # New focuses
+    LIB_political_reform: "Political Reform"
+    LIB_political_reform_desc: "The political structure of Liberia must evolve. The question is: in which direction?"
+    LIB_unification_policy: "Unification Policy"
+    LIB_unification_policy_desc: "Bridge the divide between Americo-Liberians and indigenous Liberians to forge a unified nation."
+    LIB_consolidate_power: "Consolidate Executive Power"
+    LIB_consolidate_power_desc: "Strengthen the presidency to push through necessary reforms without obstruction."
+    LIB_true_democracy: "True Democracy"
+    LIB_true_democracy_desc: "Extend full democratic rights to all Liberians regardless of origin."
+    LIB_league_of_nations: "League of Nations"
+    LIB_league_of_nations_desc: "Liberia is a founding member of the League of Nations. We must decide how to leverage this membership."
+    LIB_appeal_to_league: "Appeal to the League"
+    LIB_appeal_to_league_desc: "Use the League of Nations as a platform to protect Liberian sovereignty and advocate for African rights."
+    LIB_armed_neutrality: "Armed Neutrality"
+    LIB_armed_neutrality_desc: "Liberia will remain neutral in the coming conflicts, but will be prepared to defend itself."
+    LIB_west_african_solidarity: "West African Solidarity"
+    LIB_west_african_solidarity_desc: "Build a network of mutual support among West African peoples."
+
+    # New national spirits
+    LIB_spirit_national_unity: "National Unity"
+    LIB_spirit_national_unity_desc: "The barriers between Americo-Liberians and indigenous Liberians are being dismantled, forging a stronger national identity."
+    LIB_spirit_strong_executive: "Strong Executive"
+    LIB_spirit_strong_executive_desc: "The President holds firm control over the government, enabling swift decision-making."
+    LIB_spirit_peoples_republic: "People's Republic"
+    LIB_spirit_peoples_republic_desc: "Liberia has become a true democracy, with all citizens participating in governance."
+    LIB_spirit_league_member: "League of Nations Member"
+    LIB_spirit_league_member_desc: "Liberia's active participation in the League of Nations lends it international legitimacy."
+    LIB_spirit_armed_neutrality: "Armed Neutrality"
+    LIB_spirit_armed_neutrality_desc: "Liberia will not seek war, but will be ready to defend its territory."
+
+    # New events
+    LIB.3.t: "The Path Forward"
+    LIB.3.d: "The political reform initiative has begun. Two factions have emerged: those who wish to unify all Liberians under equal rights, and those who prefer to consolidate executive authority to drive change from the top."
+    LIB.3.a: "We must bring all Liberians together."
+    LIB.3.b: "Strong leadership is what Liberia needs."
+    LIB.4.t: "Industrial Opportunity"
+    LIB.4.d: "Foreign investors have expressed interest in Liberia's modernization drive. We can direct this investment toward expanding our industrial capacity or improving our infrastructure."
+    LIB.4.a: "Build new factories."
+    LIB.4.b: "Improve our roads and railways."
+    LIB.5.t: "The League and Liberia"
+    LIB.5.d: "The League of Nations has acknowledged Liberia's position. We can use this moment to strengthen our diplomatic standing or to rally support for our defense."
+    LIB.5.a: "Strengthen our diplomatic position."
+    LIB.5.b: "Rally support for our defense."
+    LIB.6.t: "West African Conference"
+    LIB.6.d: "Representatives from across West Africa have gathered in Monrovia. This is an opportunity to build lasting bonds of solidarity."
+    LIB.6.a: "Sign the solidarity pact."
+    LIB.6.b: "Observe and maintain independence."
+
+    # Decisions
+    LIB_recruit_indigenous_soldiers: "Recruit Indigenous Soldiers"
+    LIB_recruit_indigenous_soldiers_desc: "Expand the Liberian Frontier Force by recruiting from the indigenous population."
+    LIB_rubber_export_deal: "Negotiate Rubber Export Deal"
+    LIB_rubber_export_deal_desc: "Negotiate favorable terms for rubber exports to improve our economic position."
+    LIB_build_monrovia_port: "Expand Monrovia Port"
+    LIB_build_monrovia_port_desc: "Invest in expanding the port of Monrovia to improve our naval capabilities and trade."
 
     # Events
     LIB.1.t: "The Firestone Question"
@@ -377,6 +705,10 @@ localisation:
     LIB_african_brotherhood_desc: "他のアフリカ諸国との連帯を築く。"
     LIB_beacon_of_freedom: "自由の灯台"
     LIB_beacon_of_freedom_desc: "リベリアは自由の地として建国された。世界を鼓舞しよう。"
+    # オピニオンモディファイア
+    LIB_american_friendship: "アメリカとの友好"
+    LIB_african_solidarity: "アフリカの連帯"
+    LIB_nationalization_anger: "国有化への怒り"
     # 国家精神
     LIB_spirit_firestone_concession: "ファイアストーン租借地"
     LIB_spirit_firestone_concession_desc: "ファイアストーン・ゴム会社はリベリアの土地100万エーカーに対して99年間の租借権を持ち、アメリカの利益のために我が国の資源を搾取している。"
