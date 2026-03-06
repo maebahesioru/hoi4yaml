@@ -365,6 +365,95 @@ The following are automatically checked on every run:
 | Missing localisation keys | For events/focuses/ideas → WARN |
 | Duplicate IDs | Focus IDs and event IDs → WARN |
 
+### add_state_building / add_state_manpower
+
+```yaml
+reward:
+  add_state_building:
+    state: berlin          # state name or ID
+    type: industrial_complex
+    level: 3
+    instant: true          # default: true
+  add_state_manpower:
+    state: 64              # state ID
+    value: 10000
+```
+
+Expands to:
+```
+64 = {
+    add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+    add_manpower = 10000
+}
+```
+
+### timed_idea
+
+```yaml
+reward:
+  timed_idea:
+    idea: my_timed_idea
+    days: 180
+```
+
+Note: `days_remove` must also be set on the idea definition itself.
+
+### color auto-duplicate
+
+```yaml
+# color is automatically copied to color_ui if color_ui is omitted
+named_colors:
+  - _file: my_colors
+    my_color:
+      color: [0.5, 0.2, 0.1]   # → color + color_ui both set
+```
+
+---
+
+## CLI flags (complete)
+
+```bash
+hoi4yaml mod.yaml                    # generate
+hoi4yaml mod.yaml --clean            # delete output dir first
+hoi4yaml mod.yaml --check            # validate only, no output
+hoi4yaml mod.yaml --validate         # same as --check
+hoi4yaml mod.yaml --diff             # write changed files only
+hoi4yaml mod.yaml --dry-run          # show what would be written, no output
+hoi4yaml mod.yaml --zip              # generate + zip archive
+hoi4yaml mod.yaml --watch            # watch for file changes, regenerate automatically
+hoi4yaml mod.yaml --output ./dist    # set output directory (default: ./output)
+hoi4yaml a.yaml b.yaml               # merge multiple YAML files into one mod
+hoi4yaml --list                      # show all sections, shorthands, validations
+hoi4yaml --list-states japan         # search state IDs by name
+hoi4yaml --list-countries ger        # search country TAGs by name
+hoi4yaml --import path/to/dir        # convert Clausewitz files → YAML
+hoi4yaml --init                      # create mod.yaml scaffold
+```
+
+### Multiple YAML files
+
+Split a large mod across multiple files — they are merged at load time:
+
+```bash
+hoi4yaml base.yaml focuses.yaml events.yaml
+```
+
+Lists are concatenated, dicts are merged. Useful for organizing large mods.
+
+---
+
+## mod_paths — referencing other mods
+
+Load GFX keys, traits, states, ideologies, and localisation keys from other installed mods to avoid false validation warnings:
+
+```yaml
+mod:
+  name: My Mod
+  mod_paths:
+    - C:/Users/.../mod/kaiserreich
+    - C:/Users/.../mod/road_to_56
+```
+
 ---
 
 ## Common pitfalls
