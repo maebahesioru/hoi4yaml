@@ -881,7 +881,163 @@ localisation:
     GER_rival: "Rival Nation"
 ```
 
+### history_states
 
+```yaml
+history_states:
+  - _file: 64_berlin
+    state:
+      id: 64
+      name: STATE_64
+      manpower: 500000
+      state_category: megalopolis
+      history:
+        owner: GER
+        controller: GER
+        add_core_of: GER
+        victory_points:
+          - [11650, 10]       # [province_id, value]
+        buildings:
+          infrastructure: 5
+          industrial_complex: 3
+          arms_factory: 2
+          air_base: 2
+          11650:              # province-level buildings
+            naval_base: 3
+      resources:
+        steel: 8
+        aluminium: 4
+      provinces:
+        - 11650
+        - 11651
+```
+
+### technologies
+
+```yaml
+technologies:
+  - _file: my_infantry_techs
+    my_infantry_1:
+      research_cost: 1.0
+      start_year: 1936
+      folder:
+        name: infantry_folder
+        position: { x: 0, y: 0 }
+      path:
+        - leads_to_tech: my_infantry_2
+          research_cost_factor: 1
+      categories: [infantry_weapons]
+      on_research_complete:
+        add_political_power: 25
+
+    my_infantry_2:
+      research_cost: 1.5
+      start_year: 1938
+      folder:
+        name: infantry_folder
+        position: { x: 0, y: 2 }
+      categories: [infantry_weapons]
+```
+
+### dynamic_modifiers
+
+```yaml
+dynamic_modifiers:
+  - _file: my_dynamic_modifiers
+    my_war_effort:
+      icon: GFX_idea_my_war_effort
+      enable:
+        has_war: yes
+      remove:
+        has_war: no
+      modifier:
+        industrial_capacity_factory:
+          var: my_war_effort_bonus
+          multiply: 1
+```
+
+### bookmarks (start scenarios)
+
+```yaml
+bookmarks:
+  - _file: my_bookmark
+    bookmark:
+      name: MY_BOOKMARK
+      desc: MY_BOOKMARK_DESC
+      date: 1936.1.1
+      picture: GFX_select_date_1936
+      default_country: GER
+      default: yes
+      country:
+        - GER
+        - FRA
+        - ENG
+```
+
+### autonomy
+
+```yaml
+autonomy:
+  - _file: my_autonomy
+    autonomy_free:
+      min_level: 0
+      max_level: 0
+      manpower_influence: 0
+      can_send_volunteers: yes
+      can_be_called_to_war: no
+      modifier:
+        autonomy_manpower_share: 0
+```
+
+### portraits
+
+```yaml
+portraits:
+  - _file: my_portraits
+    GER:
+      army:
+        male:
+          - "gfx/leaders/GER/portrait_ger_generic_1.dds"
+          - "gfx/leaders/GER/portrait_ger_generic_2.dds"
+      civilian:
+        male:
+          - "gfx/leaders/GER/portrait_ger_civ_generic_1.dds"
+```
+
+### country_colors
+
+```yaml
+country_colors:
+  - _file: my_country_colors
+    MY_TAG:
+      color: [0.5, 0.2, 0.1]    # → color + color_ui both set automatically
+      color_ui: [0.6, 0.3, 0.2] # optional override
+```
+
+### _if (conditional entries)
+
+```yaml
+vars:
+  DEBUG: false
+
+national_focus:
+  - _file: GER_focuses
+    focus_tree:
+      focus:
+        - id: GER_focus_1
+          x: 0
+          y: 0
+          reward:
+            add_political_power: 100
+        - _if: $DEBUG           # skipped when DEBUG=false
+          id: GER_debug_focus
+          x: 0
+          y: 1
+```
+
+`_if` must be Python `false` (boolean), not a string.
+
+### sprites
 
 ```yaml
 interface:
