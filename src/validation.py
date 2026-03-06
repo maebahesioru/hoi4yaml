@@ -525,3 +525,15 @@ def validate(config):
         for k, v in entry.items():
             if not k.startswith("_") and isinstance(v, dict):
                 _check_loc(k, "peace_conference")
+
+    # localisation: warn about untranslated keys in explicitly specified languages
+    loc = config.get("localisation", {})
+    if isinstance(loc, dict) and loc and isinstance(next(iter(loc.values())), dict):
+        base = loc.get("english") or next(iter(loc.values()), {})
+        for lang, entries in loc.items():
+            if lang == "english" or not isinstance(entries, dict):
+                continue
+            missing = [k for k in base if k not in entries]
+            if missing:
+                warn(f"localisation: {lang} is missing {len(missing)} translation(s): "
+                     f"{', '.join(missing[:5])}{'...' if len(missing) > 5 else ''}")
