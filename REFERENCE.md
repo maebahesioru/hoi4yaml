@@ -1220,7 +1220,109 @@ add_core: 64        # takes state ID
 
 ---
 
-## File encoding
+## cosmetic_tags
+
+Rename a country's displayed name/flag without changing its TAG:
+
+```yaml
+cosmetic_tags:
+  - _file: my_cosmetic_tags
+    GER_GREATER_GERMANY:
+      name: GREATER_GERMANY
+      adjective: GREATER_GERMANY_ADJ
+      flag: GER_GREATER_GERMANY    # looks for gfx/flags/GER_GREATER_GERMANY.tga
+
+localisation:
+  english:
+    GREATER_GERMANY: "Greater Germany"
+    GREATER_GERMANY_ADJ: "Greater German"
+```
+
+Apply in-game:
+```yaml
+reward:
+  set_cosmetic_tag: GER_GREATER_GERMANY
+```
+
+---
+
+## wargoals
+
+```yaml
+wargoals:
+  - _file: my_wargoals
+    my_wargoal:
+      icon: generic_conquest
+      allowed:
+        always: yes
+      available:
+        has_war: no
+      ai_will_do:
+        factor: 1
+      on_add:
+        add_political_power: -50
+      peace_options:
+        - transfer_state
+        - puppet
+```
+
+Use in effects:
+```yaml
+reward:
+  create_wargoal:
+    type: my_wargoal
+    target: FRA
+```
+
+---
+
+## --import output format
+
+`hoi4yaml --import path/to/dir` converts Clausewitz files to YAML and saves to `imported.yaml`. Each file becomes a top-level section key:
+
+Input (`common/ideas/GER_ideas.txt`):
+```
+ideas = {
+    country = {
+        GER_war_economy = {
+            picture = generic_production_bonus
+            modifier = { industrial_capacity_factory = 0.1 }
+        }
+    }
+}
+```
+
+Output (`imported.yaml`):
+```yaml
+ideas:
+  - _file: GER_ideas
+    ideas:
+      country:
+        GER_war_economy:
+          picture: generic_production_bonus
+          modifier:
+            industrial_capacity_factory: 0.1
+```
+
+Note: imported YAML may need manual cleanup (e.g. adding `_category`, `_wrap`, shorthands).
+
+---
+
+## mod_paths — referencing other mods
+
+Load GFX keys, traits, states, ideologies, and localisation keys from other installed mods to suppress false validation warnings:
+
+```yaml
+mod:
+  name: My Mod
+  mod_paths:
+    - "/mnt/c/Users/me/Documents/Paradox Interactive/Hearts of Iron IV/mod/kaiserreich"
+    - "/mnt/c/Users/me/Documents/Paradox Interactive/Hearts of Iron IV/mod/road_to_56"
+```
+
+Useful when your mod references GFX sprites, traits, or ideas defined in another mod.
+
+
 
 - `.txt` files: UTF-8 without BOM
 - `.yml` localisation files: UTF-8 with BOM (required by HoI4)
