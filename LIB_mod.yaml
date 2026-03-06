@@ -18,8 +18,6 @@ national_focus:
       focus:
         # Root
         - id: LIB_lone_star
-          x: 6
-          y: 0
           cost: 5
           reward:
             add_political_power: 50
@@ -27,16 +25,12 @@ national_focus:
 
         # === Economic Branch ===
         - id: LIB_firestone_question
-          x: 2
-          y: 1
           prereq: LIB_lone_star
           cost: 10
           reward:
             country_event: { id: LIB.1 }
 
         - id: LIB_rubber_boom
-          x: 0
-          y: 2
           prereq: LIB_firestone_question
           cost: 10
           reward:
@@ -49,8 +43,6 @@ national_focus:
               amount: 3
 
         - id: LIB_american_ties
-          x: 2
-          y: 2
           prereq: LIB_firestone_question
           cost: 10
           reward:
@@ -60,8 +52,6 @@ national_focus:
             add_political_power: 50
 
         - id: LIB_modernize_economy
-          x: 1
-          y: 3
           prereq_or: [LIB_rubber_boom, LIB_american_ties]
           cost: 10
           reward:
@@ -70,8 +60,6 @@ national_focus:
 
         # === Military Branch ===
         - id: LIB_reform_military
-          x: 6
-          y: 1
           prereq: LIB_lone_star
           cost: 10
           reward:
@@ -79,8 +67,6 @@ national_focus:
             army_experience: 25
 
         - id: LIB_frontier_force
-          x: 5
-          y: 2
           prereq: LIB_reform_military
           cost: 10
           reward:
@@ -91,8 +77,6 @@ national_focus:
               category: infantry_weapons
 
         - id: LIB_coastal_defense
-          x: 7
-          y: 2
           prereq: LIB_reform_military
           cost: 10
           reward:
@@ -108,8 +92,6 @@ national_focus:
 
         # === Pan-African Branch ===
         - id: LIB_voice_of_africa
-          x: 10
-          y: 1
           prereq: LIB_lone_star
           cost: 10
           reward:
@@ -117,8 +99,6 @@ national_focus:
             add_ideas: LIB_spirit_pan_africa
 
         - id: LIB_african_brotherhood
-          x: 9
-          y: 2
           prereq: LIB_voice_of_africa
           cost: 10
           reward:
@@ -129,8 +109,6 @@ national_focus:
                 modifier: LIB_african_solidarity
 
         - id: LIB_beacon_of_freedom
-          x: 11
-          y: 2
           prereq: LIB_voice_of_africa
           cost: 10
           reward:
@@ -139,16 +117,12 @@ national_focus:
 
         # === Political Reform Branch ===
         - id: LIB_political_reform
-          x: 4
-          y: 1
           prereq: LIB_lone_star
           cost: 10
           reward:
             country_event: { id: LIB.3 }
 
         - id: LIB_unification_policy
-          x: 3
-          y: 2
           prereq: LIB_political_reform
           cost: 10
           reward:
@@ -157,8 +131,6 @@ national_focus:
             add_stability: 0.05
 
         - id: LIB_consolidate_power
-          x: 5
-          y: 2
           prereq: LIB_political_reform
           cost: 10
           reward:
@@ -166,8 +138,6 @@ national_focus:
             add_political_power: 100
 
         - id: LIB_true_democracy
-          x: 3
-          y: 3
           prereq: LIB_unification_policy
           cost: 10
           reward:
@@ -177,8 +147,6 @@ national_focus:
 
         # === Foreign Policy Branch ===
         - id: LIB_league_of_nations
-          x: 8
-          y: 1
           prereq: LIB_lone_star
           cost: 10
           reward:
@@ -186,8 +154,6 @@ national_focus:
             country_event: { id: LIB.5 }
 
         - id: LIB_appeal_to_league
-          x: 7
-          y: 2
           prereq: LIB_league_of_nations
           cost: 10
           reward:
@@ -195,8 +161,6 @@ national_focus:
             add_political_power: 25
 
         - id: LIB_armed_neutrality
-          x: 9
-          y: 2
           prereq: LIB_league_of_nations
           cost: 10
           reward:
@@ -204,8 +168,6 @@ national_focus:
             add_war_support: 0.1
 
         - id: LIB_west_african_solidarity
-          x: 8
-          y: 3
           prereq_or: [LIB_appeal_to_league, LIB_armed_neutrality]
           cost: 10
           reward:
@@ -218,14 +180,12 @@ ideas:
     _category: country
 
     LIB_spirit_firestone_concession:
-      picture: generic_foreign_capital
       cost: 0
       removal_cost: 0
       modifier:
         political_power_gain: -0.1
 
     LIB_spirit_americo_liberian_elite:
-      picture: generic_political_discourse
       cost: 0
       removal_cost: 0
       modifier:
@@ -233,7 +193,6 @@ ideas:
         political_power_gain: -0.05
 
     LIB_spirit_lone_star:
-      picture: generic_pp_unity_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -241,7 +200,6 @@ ideas:
         political_power_gain: 0.1
 
     LIB_spirit_modernization:
-      picture: generic_production_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -249,7 +207,6 @@ ideas:
         production_speed_buildings_factor: 0.05
 
     LIB_spirit_military_reform:
-      picture: generic_army_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -257,7 +214,6 @@ ideas:
         training_time_factor: -0.1
 
     LIB_spirit_pan_africa:
-      picture: generic_democratic_drift_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -265,7 +221,6 @@ ideas:
         stability_factor: 0.05
 
     LIB_spirit_beacon_freedom:
-      picture: generic_volunteer_expedition_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -273,7 +228,6 @@ ideas:
         war_support_factor: 0.05
 
     LIB_spirit_national_unity:
-      picture: generic_pp_unity_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -282,7 +236,6 @@ ideas:
         conscription: 0.01
 
     LIB_spirit_strong_executive:
-      picture: generic_fascism_drift_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -290,7 +243,6 @@ ideas:
         stability_factor: -0.05
 
     LIB_spirit_peoples_republic:
-      picture: generic_democratic_drift_bonus
       cost: 0
       removal_cost: -1
       modifier:
@@ -299,7 +251,6 @@ ideas:
         conscription: 0.02
 
     LIB_spirit_league_member:
-      picture: generic_foreign_capital
       cost: 0
       removal_cost: -1
       modifier:
@@ -307,7 +258,6 @@ ideas:
         stability_factor: 0.05
 
     LIB_spirit_armed_neutrality:
-      picture: generic_army_bonus
       cost: 0
       removal_cost: -1
       modifier:
