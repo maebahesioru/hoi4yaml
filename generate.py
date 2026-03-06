@@ -143,6 +143,7 @@ SECTIONS = {
     "country_metadata":      ("country_metadata",                   "txt"),
     "tutorial":              ("tutorial",                           "txt"),
     "interface":             ("interface",                          "gfx"),
+    "interface_gui":         ("interface",                          "gui"),
     "music":                 ("music",                              "asset"),
     "sound":                 ("sound",                              "asset"),
 }
