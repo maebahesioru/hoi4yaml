@@ -501,3 +501,21 @@ def validate(config):
         for k, v in entry.items():
             if not k.startswith("_") and isinstance(v, dict):
                 _check_loc(k, "special_project")
+
+    # modifiers: custom modifier name
+    for entry in config.get("modifiers", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "modifier")
+
+    # timed_activities: activity name
+    for entry in config.get("timed_activities", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "timed_activity")
+
+    # scripted_diplomatic_actions: action name
+    for entry in config.get("scripted_diplomatic_actions", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "scripted_diplomatic_action")
