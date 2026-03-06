@@ -464,3 +464,22 @@ def validate(config):
         for k, v in entry.items():
             if not k.startswith("_") and isinstance(v, dict):
                 _check_loc(k, "autonomy")
+
+    # country_leader / unit_leader: leader ID
+    for section in ("country_leader", "unit_leader"):
+        for entry in config.get(section, []):
+            for k, v in entry.items():
+                if not k.startswith("_") and isinstance(v, dict):
+                    _check_loc(k, section)
+
+    # game_rules: rule name
+    for entry in config.get("game_rules", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "game_rule")
+
+    # state_category: category name
+    for entry in config.get("state_category", []):
+        for k, v in entry.items():
+            if not k.startswith("_") and isinstance(v, dict):
+                _check_loc(k, "state_category")
