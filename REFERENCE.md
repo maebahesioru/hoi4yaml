@@ -69,6 +69,8 @@ localisation:
     MY_key: "テキスト"
 ```
 
+`english` only is sufficient — all other languages (french, german, spanish, russian, polish, braz_por, japanese, korean, simp_chinese) are auto-generated as copies. Per-language keys override English. Supported languages are auto-detected from the game's `localisation/languages.yml`.
+
 ---
 
 ## Sections
@@ -306,6 +308,18 @@ Each section is a list of entries. Every entry has a `_file` key that sets the o
 | `wargoals` | `common/wargoals/*.txt` |
 | `weather` | `common/*.txt` |
 | `localisation` | `localisation/mod_l_<lang>.yml` |
+
+All supported languages are auto-detected from the game's `localisation/languages.yml`. If only `english` is provided, all other languages are automatically generated as copies. Per-language overrides are merged on top of English:
+
+```yaml
+localisation:
+  english:
+    MY_key: "My Text"
+  japanese:
+    MY_key: "テキスト"   # overrides English for Japanese only
+  # french, german, spanish, russian, polish, braz_por, korean, simp_chinese
+  # are all auto-generated from english if not specified
+```
 
 ---
 
