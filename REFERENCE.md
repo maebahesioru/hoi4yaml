@@ -114,7 +114,7 @@ Each section is a list of entries. Every entry has a `_file` key that sets the o
 | `_category: country` | Wrap content in `ideas: { country: { ... } }` |
 | `_wrap: characters` | Wrap content in `characters: { ... }` |
 | `_template: X` | Inherit from `templates.X`, then override |
-| `_if: false` | Skip this entry entirely |
+| `_if: false` | Skip this entry entirely — must be Python `false` (not a string or expression) |
 
 ---
 
@@ -173,13 +173,23 @@ ideas:
 events:
   - _file: my_events
     _namespace: my_mod        # must match event ID prefix
-    country_event:
+    country_event:            # fires for a country
       - id: my_mod.1
         # title and desc auto-set to my_mod.1.t / my_mod.1.d if omitted
         is_triggered_only: yes
         option:
           - name: my_mod.1.a  # auto-set to my_mod.1.a if omitted
             add_political_power: 50
+    news_event:               # fires for ALL countries (use sparingly)
+      - id: my_mod.2
+        is_triggered_only: yes
+        option:
+          - name: my_mod.2.a
+    state_event:              # fires for a state scope
+      - id: my_mod.3
+        is_triggered_only: yes
+        option:
+          - name: my_mod.3.a
 ```
 
 ### History
